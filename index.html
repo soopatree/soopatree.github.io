@@ -278,6 +278,27 @@
         downloadDonationBtn.addEventListener("click", downloadDonationCSV);
         downloadRouletteBtn.addEventListener("click", downloadRouletteCSV);
 
+        // Add click event to open file input dialog
+        dropZone.addEventListener("click", function () {
+          const fileInput = document.createElement("input");
+          fileInput.type = "file";
+          fileInput.accept = ".csv";
+          fileInput.style.display = "none";
+
+          fileInput.addEventListener("change", function (event) {
+            const file = event.target.files[0];
+            if (file && (file.type === "text/csv" || file.name.endsWith(".csv"))) {
+              parseCSV(file);
+            } else {
+              alert("CSV 파일만 지원됩니다.");
+            }
+          });
+
+          document.body.appendChild(fileInput);
+          fileInput.click();
+          document.body.removeChild(fileInput);
+        });
+
         function preventDefaults(e) {
           e.preventDefault();
           e.stopPropagation();
