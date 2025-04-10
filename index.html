@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>후원 분석 대시보드</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Noto Sans KR", sans-serif;
+      }
+      body {
+        background-color: #f5f7fa;
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1,
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #2c3e50;
+      }
+      .drop-zone {
+        padding: 40px;
+        border: 3px dashed #7f8c8d;
+        border-radius: 8px;
+        background-color: #ecf0f1;
+        text-align: center;
+        margin-bottom: 40px;
+        transition: all 0.3s;
+        cursor: pointer;
+      }
+      .drop-zone.highlight {
+        border-color: #3498db;
+        background-color: #d6eaf8;
+      }
+      .drop-zone p {
+        font-size: 18px;
+        margin-bottom: 0;
+      }
+      .results {
+        display: none;
+        margin-top: 30px;
+      }
+      .dashboard {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+      .card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        overflow: hidden;
+      }
+      .table-container {
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+      th,
+      td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+      th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+      }
+      tr:hover {
+        background-color: #f5f5f5;
+      }
+      .rank {
+        display: inline-block;
+        background: #3498db;
+        color: white;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 28px;
+        margin-right: 10px;
+      }
+      .donation-amount {
+        font-weight: bold;
+        color: #e74c3c;
+      }
+      .download-button-container {
+        text-align: right;
+        margin-bottom: 10px;
+      }
+      .download-button {
+        background-color: #2ecc71;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 8px 15px;
+        cursor: pointer;
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+        transition: background-color 0.3s;
+      }
+      .download-button:hover {
+        background-color: #27ae60;
+      }
+      .download-button::before {
+        content: "⬇️";
+        margin-right: 5px;
+      }
+      .roulette-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        font-size: 14px;
+      }
+      .roulette-table th,
+      .roulette-table td {
+        padding: 8px;
+        text-align: center;
+        border: 1px solid #ddd;
+      }
+      .roulette-table th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+      }
+      .roulette-table td.highlight {
+        background-color: #d6eaf8;
+        font-weight: bold;
+        color: #2980b9;
+      }
+      .roulette-table tr:hover {
+        background-color: #f5f5f5;
+      }
+      .roulette-table td:first-child {
+        text-align: left;
+        white-space: nowrap;
+        max-width: 250px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .draggable-header {
+        cursor: move;
+        user-select: none;
+        position: relative;
+      }
+
+      /* .draggable-header::after {
+            content: "↔";
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            opacity: 0.5;
+        } */
+
+      .draggable-header:hover {
+        background-color: #e3f2fd;
+      }
+
+      .dragging {
+        opacity: 0.5;
+        background-color: #bbdefb !important;
+      }
+
+      .drag-over {
+        background-color: #e3f2fd;
+        border: 2px dashed #2196f3;
+      }
+
+      .header-placeholder {
+        display: inline-block;
+        background-color: #f5f5f5;
+        border: 1px dashed #ccc;
+        padding: 10px;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>후원 분석 대시보드</h1>
+
+      <div class="drop-zone" id="dropZone">
+        <p>CSV 파일을 여기에 끌어다 놓으세요</p>
+      </div>
+
+      <div class="results" id="results">
+        <div class="dashboard">
+          <div class="card">
+            <h2>후원 순위 (후원개수 기준)</h2>
+            <div class="download-button-container">
+              <button id="downloadDonationBtn" class="download-button">CSV 다운로드</button>
+            </div>
+            <div class="table-container">
+              <table id="donationTable">
+                <thead>
+                  <tr>
+                    <th>순위</th>
+                    <th>후원자</th>
+                    <th>후원개수</th>
+                  </tr>
+                </thead>
+                <tbody id="donationTableBody">
+                  <!-- Donation data will be inserted here -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>룰렛 결과 통계</h2>
+            <div class="download-button-container">
+              <button id="downloadRouletteBtn" class="download-button">CSV 다운로드</button>
+            </div>
+            <div class="table-container">
+              <div id="rouletteGrid">
+                <!-- Roulette data will be inserted here -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const dropZone = document.getElementById("dropZone");
+        const results = document.getElementById("results");
+        const donationTableBody = document.getElementById("donationTableBody");
+        const rouletteGrid = document.getElementById("rouletteGrid");
+        const downloadDonationBtn = document.getElementById("downloadDonationBtn");
+        const downloadRouletteBtn = document.getElementById("downloadRouletteBtn");
+
+        // Store data globally for download
+        let processedDonations = [];
+        let processedRoulette = {
+          donors: {},
+          results: [],
+        };
+
+        // Prevent default drag behaviors
+        ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+          dropZone.addEventListener(eventName, preventDefaults, false);
+          document.body.addEventListener(eventName, preventDefaults, false);
+        });
+
+        // Highlight drop zone when dragging over it
+        ["dragenter", "dragover"].forEach((eventName) => {
+          dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ["dragleave", "drop"].forEach((eventName) => {
+          dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        // Handle dropped files
+        dropZone.addEventListener("drop", handleDrop, false);
+
+        // Add download event listeners
+        downloadDonationBtn.addEventListener("click", downloadDonationCSV);
+        downloadRouletteBtn.addEventListener("click", downloadRouletteCSV);
+
+        function preventDefaults(e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+
+        function highlight() {
+          dropZone.classList.add("highlight");
+        }
+
+        function unhighlight() {
+          dropZone.classList.remove("highlight");
+        }
+
+        function handleDrop(e) {
+          const dt = e.dataTransfer;
+          const files = dt.files;
+
+          if (files.length) {
+            const file = files[0];
+            if (file.type === "text/csv" || file.name.endsWith(".csv")) {
+              parseCSV(file);
+            } else {
+              alert("CSV 파일만 지원됩니다.");
+            }
+          }
+        }
+
+        function parseCSV(file) {
+          const reader = new FileReader();
+
+          reader.onload = function (e) {
+            const contents = e.target.result;
+            processData(contents);
+          };
+
+          reader.readAsText(file);
+        }
+
+        function processData(csv) {
+          // Parse CSV
+          const lines = csv.split("\n");
+
+          // Override the header with the correct format
+          const fixedHeaders = ["후원종류", "후원일시", "후원자", "후원개수", "후원메시지", "룰렛결과"];
+
+          // Define fixed indices for each column
+          const donorIndex = 2; // 후원자 (index 2)
+          const amountIndex = 3; // 후원개수 (index 3)
+          const messageIndex = 4; // 후원메시지 (index 4)
+          const rouletteIndex = 5; // 룰렛결과 (index 5)
+
+          // Process data - group by user ID
+          const donorsById = {};
+          const rouletteByDonor = {};
+          const allRouletteResults = new Set();
+
+          // Start from index 1 to skip the original header
+          for (let i = 1; i < lines.length; i++) {
+            if (!lines[i].trim()) continue;
+
+            const columns = lines[i].split(",").map((col) => col.trim());
+
+            // Skip lines that don't have enough columns
+            if (columns.length < 6) continue;
+
+            const donorFull = columns[donorIndex];
+            const amountStr = columns[amountIndex].replace(/[^0-9]/g, "");
+            const amount = parseInt(amountStr, 10) || 0;
+            const message = columns[messageIndex];
+            const roulette = columns[rouletteIndex];
+
+            // Extract ID from the parentheses
+            const idMatch = donorFull.match(/\(([^)]+)\)/);
+            if (!idMatch) continue; // Skip if no ID found
+
+            const userId = idMatch[1];
+            const nickname = donorFull.replace(/\([^)]+\)/, "").trim();
+
+            // Initialize donor data if not exists
+            if (!donorsById[userId]) {
+              donorsById[userId] = {
+                id: userId,
+                nicknames: new Set(),
+                totalAmount: 0,
+                messages: [],
+              };
+            }
+
+            // Add nickname and update totals
+            donorsById[userId].nicknames.add(nickname);
+            donorsById[userId].totalAmount += amount;
+
+            if (message) {
+              donorsById[userId].messages.push(message);
+            }
+
+            // Track roulette results by donor
+            if (roulette) {
+              if (!rouletteByDonor[userId]) {
+                rouletteByDonor[userId] = {};
+              }
+
+              if (!rouletteByDonor[userId][roulette]) {
+                rouletteByDonor[userId][roulette] = 0;
+              }
+
+              rouletteByDonor[userId][roulette]++;
+              allRouletteResults.add(roulette);
+            }
+          }
+
+          // Convert to array and sort by total amount
+          const donations = Object.values(donorsById);
+          donations.sort((a, b) => b.totalAmount - a.totalAmount);
+
+          // Store data for downloads
+          processedDonations = donations;
+          processedRoulette.donors = rouletteByDonor;
+          processedRoulette.results = Array.from(allRouletteResults).sort();
+          processedRoulette.donorsById = donorsById;
+
+          // Display donations
+          donationTableBody.innerHTML = "";
+          donations.forEach((donation, index) => {
+            const row = document.createElement("tr");
+
+            // Format nicknames with asterisks for multiple names
+            const nicknamesArray = Array.from(donation.nicknames);
+            let nicknameDisplay = nicknamesArray[0] + "(" + donation.id + ")";
+
+            if (nicknamesArray.length > 1) {
+              nicknameDisplay += " *" + nicknamesArray.slice(1).join(", *");
+            }
+
+            row.innerHTML = `
+                        <td><span class="rank">${index + 1}</span></td>
+                        <td>${nicknameDisplay}</td>
+                        <td><span class="donation-amount">${donation.totalAmount}</span></td>
+                    `;
+            donationTableBody.appendChild(row);
+          });
+
+          // Display roulette results in a table
+          rouletteGrid.innerHTML = "";
+
+          // Create table for roulette results
+          const table = document.createElement("table");
+          table.className = "roulette-table";
+
+          // Convert Set to sorted Array
+          const rouletteResultsArray = Array.from(allRouletteResults).sort();
+
+          // Create header row
+          const thead = document.createElement("thead");
+          const headerRow = document.createElement("tr");
+
+          // Add donor column header (not draggable)
+          const donorHeader = document.createElement("th");
+          donorHeader.textContent = "후원자";
+          donorHeader.setAttribute("data-fixed", "true");
+          headerRow.appendChild(donorHeader);
+
+          // Add column for each roulette result (draggable)
+          rouletteResultsArray.forEach((result, index) => {
+            const th = document.createElement("th");
+            th.textContent = result;
+            th.setAttribute("draggable", "true");
+            th.setAttribute("data-result", result);
+            th.setAttribute("data-index", index + 1); // +1 because donor column is at index 0
+            th.className = "draggable-header";
+            headerRow.appendChild(th);
+          });
+
+          thead.appendChild(headerRow);
+          table.appendChild(thead);
+
+          // Create table body
+          const tbody = document.createElement("tbody");
+
+          // Add row for each donor
+          Object.keys(rouletteByDonor).forEach((userId) => {
+            const donor = donorsById[userId];
+            if (!donor) return;
+
+            const row = document.createElement("tr");
+
+            // Add donor name cell
+            const donorCell = document.createElement("td");
+            const nicknamesArray = Array.from(donor.nicknames);
+            let nicknameDisplay = nicknamesArray[0] + "(" + donor.id + ")";
+
+            if (nicknamesArray.length > 1) {
+              nicknameDisplay += " *" + nicknamesArray.slice(1).join(", *");
+            }
+
+            donorCell.textContent = nicknameDisplay;
+            row.appendChild(donorCell);
+
+            // Add count cell for each result
+            rouletteResultsArray.forEach((result) => {
+              const cell = document.createElement("td");
+              cell.setAttribute("data-result", result);
+              const count = rouletteByDonor[userId][result] || 0;
+
+              if (count > 0) {
+                cell.textContent = count;
+                cell.className = "highlight";
+              } else {
+                cell.textContent = "-";
+              }
+
+              row.appendChild(cell);
+            });
+
+            tbody.appendChild(row);
+          });
+
+          table.appendChild(tbody);
+          rouletteGrid.appendChild(table);
+
+          // Enable drag and drop for table headers
+          setupDragDropForHeaders(table);
+
+          // Show results
+          results.style.display = "block";
+
+          // Enable download buttons
+          downloadDonationBtn.disabled = false;
+          downloadRouletteBtn.disabled = false;
+        }
+
+        // Function to setup drag and drop for table headers
+        function setupDragDropForHeaders(table) {
+          const headers = table.querySelectorAll("th.draggable-header");
+          let draggedHeader = null;
+          let placeholder = null;
+
+          headers.forEach((header) => {
+            // Dragstart event
+            header.addEventListener("dragstart", function (e) {
+              draggedHeader = this;
+              this.classList.add("dragging");
+
+              // Create a placeholder element for the dragged header
+              placeholder = document.createElement("div");
+              placeholder.classList.add("header-placeholder");
+              placeholder.textContent = this.textContent;
+
+              // Set some data for the drag operation
+              e.dataTransfer.setData("text/plain", this.textContent);
+              e.dataTransfer.effectAllowed = "move";
+
+              // Create a custom drag image (optional)
+              const dragImage = this.cloneNode(true);
+              dragImage.style.display = "inline-block";
+              dragImage.style.opacity = "0.7";
+              document.body.appendChild(dragImage);
+              e.dataTransfer.setDragImage(dragImage, 0, 0);
+
+              // Remove the drag image after it's no longer needed
+              setTimeout(() => {
+                document.body.removeChild(dragImage);
+              }, 0);
+            });
+
+            // Dragend event
+            header.addEventListener("dragend", function () {
+              this.classList.remove("dragging");
+              draggedHeader = null;
+            });
+
+            // Dragover event
+            header.addEventListener("dragover", function (e) {
+              e.preventDefault();
+              e.dataTransfer.dropEffect = "move";
+              this.classList.add("drag-over");
+            });
+
+            // Dragleave event
+            header.addEventListener("dragleave", function () {
+              this.classList.remove("drag-over");
+            });
+
+            // Drop event
+            header.addEventListener("drop", function (e) {
+              e.preventDefault();
+              this.classList.remove("drag-over");
+
+              if (draggedHeader && draggedHeader !== this) {
+                // Swap the columns
+                swapColumns(table, draggedHeader, this);
+
+                // Update the download order
+                updateRouletteResultsOrder();
+              }
+            });
+          });
+        }
+
+        // Function to swap columns in the table
+        function swapColumns(table, fromHeader, toHeader) {
+          const fromIndex = parseInt(fromHeader.getAttribute("data-index"));
+          const toIndex = parseInt(toHeader.getAttribute("data-index"));
+
+          // Update the data-index attributes
+          fromHeader.setAttribute("data-index", toIndex);
+          toHeader.setAttribute("data-index", fromIndex);
+
+          // Get all rows (including the header row)
+          const rows = table.querySelectorAll("tr");
+
+          // For each row, swap the cells at the given indices
+          rows.forEach((row) => {
+            const cells = row.querySelectorAll("th, td");
+
+            // Skip if there aren't enough cells
+            if (cells.length <= Math.max(fromIndex, toIndex)) return;
+
+            // Swap the cells
+            const fromCell = cells[fromIndex];
+            const toCell = cells[toIndex];
+
+            // Create a temporary marker
+            const temp = document.createElement("div");
+            row.insertBefore(temp, fromCell);
+
+            // Move the cells
+            row.insertBefore(fromCell, toCell);
+            row.insertBefore(toCell, temp);
+
+            // Remove the temporary marker
+            row.removeChild(temp);
+          });
+        }
+
+        // Function to update the roulette results order for downloads
+        function updateRouletteResultsOrder() {
+          if (!processedRoulette.results || processedRoulette.results.length === 0) return;
+
+          // Get the headers in their current order
+          const headers = document.querySelectorAll(".roulette-table th.draggable-header");
+          const newOrder = Array.from(headers).map((header) => header.getAttribute("data-result"));
+
+          // Update the results array with the new order
+          processedRoulette.results = newOrder;
+        }
+
+        // Function to download donation ranking as CSV
+        function downloadDonationCSV() {
+          if (processedDonations.length === 0) {
+            alert("다운로드할 데이터가 없습니다. CSV 파일을 먼저 업로드해주세요.");
+            return;
+          }
+
+          // Create CSV header
+          let csvContent = "순위,후원자,아이디,닉네임,후원개수\n";
+
+          // Add data rows
+          processedDonations.forEach((donation, index) => {
+            const rank = index + 1;
+            const id = donation.id;
+            const nicknamesArray = Array.from(donation.nicknames);
+            const primaryNickname = nicknamesArray[0];
+            const allNicknames = nicknamesArray.join(", ");
+            const amount = donation.totalAmount;
+
+            // Format the full donor name for display
+            const donorFull = primaryNickname + "(" + id + ")";
+
+            // Add row to CSV content
+            csvContent += `${rank},"${donorFull}","${id}","${allNicknames}",${amount}\n`;
+          });
+
+          // Create and download the file
+          downloadCSV(csvContent, "후원순위.csv");
+        }
+
+        // Function to download roulette statistics as CSV
+        function downloadRouletteCSV() {
+          if (!processedRoulette.results || processedRoulette.results.length === 0) {
+            alert("다운로드할 데이터가 없습니다. CSV 파일을 먼저 업로드해주세요.");
+            return;
+          }
+
+          // Get the latest order of results from the DOM
+          updateRouletteResultsOrder();
+
+          // Create header row with all roulette results
+          let header = "후원자,아이디,닉네임";
+          processedRoulette.results.forEach((result) => {
+            header += `,${result}`;
+          });
+          let csvContent = header + "\n";
+
+          // Add data for each donor
+          Object.keys(processedRoulette.donors).forEach((userId) => {
+            const donor = processedRoulette.donorsById[userId];
+            if (!donor) return;
+
+            const nicknamesArray = Array.from(donor.nicknames);
+            const primaryNickname = nicknamesArray[0];
+            const allNicknames = nicknamesArray.join(", ");
+            const donorFull = primaryNickname + "(" + userId + ")";
+
+            // Start building the row
+            let row = `"${donorFull}","${userId}","${allNicknames}"`;
+
+            // Add count for each roulette result in the current order
+            processedRoulette.results.forEach((result) => {
+              const count = processedRoulette.donors[userId][result] || 0;
+              // Leave cell empty if count is 0
+              row += count > 0 ? `,${count}` : `,`;
+            });
+
+            // Add the row to CSV content
+            csvContent += row + "\n";
+          });
+
+          // Create and download the file
+          downloadCSV(csvContent, "룰렛결과통계.csv");
+        }
+
+        // Helper function to create and download a CSV file
+        function downloadCSV(csvContent, fileName) {
+          // Convert CSV string to UTF-8 encoding
+          const csvUTF8 = new Blob([new Uint8Array([0xef, 0xbb, 0xbf]), csvContent], { type: "text/csv;charset=utf-8;" });
+
+          // Create a download link
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(csvUTF8);
+          link.download = fileName;
+
+          // Trigger download
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+      });
+    </script>
+  </body>
+</html>
