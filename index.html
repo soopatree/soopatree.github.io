@@ -67,6 +67,9 @@
       }
       .table-container {
         overflow-x: auto;
+        overflow-y: auto; /* 세로 스크롤 추가 */
+        max-height: 400px; /* 최대 높이 지정 */
+        border: 1px solid #ddd; /* 테두리 추가 */
       }
       table {
         width: 100%;
@@ -192,11 +195,43 @@
         padding: 10px;
         border-radius: 4px;
       }
+
+      /* CSV 에디터 테이블에도 동일한 스타일 적용 */
+      #csvEditorTable {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      #csvEditorTable th,
+      #csvEditorTable td {
+        padding: 8px;
+        text-align: left;
+        border: 1px solid #ddd;
+      }
+
+      #csvEditorTable th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+      }
     </style>
   </head>
   <body>
     <div class="container">
       <h1>후원 분석 대시보드</h1>
+
+      <!-- CSV 에디터 섹션 -->
+      <div class="csv-editor" id="csvEditor" style="display: none;">
+        <h2>CSV 에디터</h2>
+        <div class="table-container">
+          <table id="csvEditorTable">
+            <!-- CSV 데이터가 여기에 렌더링됩니다 -->
+          </table>
+        </div>
+        <div class="editor-actions">
+          <button id="saveCsvBtn" class="download-button">저장</button>
+          <button id="cancelCsvBtn" class="download-button" style="background-color: #e74c3c;">취소</button>
+        </div>
+      </div>
 
       <div class="drop-zone" id="dropZone">
         <p>CSV 파일을 여기에 끌어다 놓으세요</p>
@@ -248,6 +283,59 @@
         const rouletteGrid = document.getElementById("rouletteGrid");
         const downloadDonationBtn = document.getElementById("downloadDonationBtn");
         const downloadRouletteBtn = document.getElementById("downloadRouletteBtn");
+
+        const csvEditor = document.getElementById("csvEditor");
+        const csvEditorTable = document.getElementById("csvEditorTable");
+        const saveCsvBtn = document.getElementById("saveCsvBtn");
+        const cancelCsvBtn = document.getElementById("cancelCsvBtn");
+
+        let csvData = []; // CSV 데이터를 저장할 배열
+
+        function showCsvEditor(data) {
+          csvData = data;
+          csvEditor.style.display = "block";
+          csvEditorTable.innerHTML = "";
+
+          // 테이블 헤더 생성
+          const headerRow = document.createElement("tr");
+          data[0].forEach((header) => {
+            const th = document.createElement("th");
+            th.textContent = header;
+            headerRow.appendChild(th);
+          });
+          csvEditorTable.appendChild(headerRow);
+
+          // 테이블 데이터 생성
+          data.slice(1).forEach((row, rowIndex) => {
+            const tr = document.createElement("tr");
+            row.forEach((cell, cellIndex) => {
+              const td = document.createElement("td");
+              const input = document.createElement("input");
+              input.type = "text";
+              input.value = cell;
+              input.addEventListener("input", (e) => {
+                csvData[rowIndex + 1][cellIndex] = e.target.value;
+              });
+              td.appendChild(input);
+              tr.appendChild(td);
+            });
+            csvEditorTable.appendChild(tr);
+          });
+        }
+
+        function hideCsvEditor() {
+          csvEditor.style.display = "none";
+        }
+
+        saveCsvBtn.addEventListener("click", function () {
+          hideCsvEditor();
+          alert("CSV 데이터가 저장되었습니다.");
+          // 저장된 데이터를 처리하거나 서버로 전송할 수 있습니다.
+        });
+
+        cancelCsvBtn.addEventListener("click", function () {
+          hideCsvEditor();
+        });
 
         // Store data globally for download
         let processedDonations = [];
@@ -338,8 +426,8 @@
         }
 
         function processData(csv) {
-          // Parse CSV
-          const lines = csv.split("\n");
+          const lines = csv.split("\n").map((line) => line.split(","));
+          showCsvEditor(lines);
 
           // Override the header with the correct format
           const fixedHeaders = ["후원종류", "후원일시", "후원자", "후원개수", "후원메시지", "룰렛결과"];
