@@ -54,8 +54,8 @@
         margin-top: 30px;
       }
       .dashboard {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
+        display: flex;
+        flex-direction: column; /* 가로 배치에서 세로 배치로 변경 */
         gap: 20px;
       }
       .card {
@@ -205,6 +205,18 @@
       <div class="results" id="results">
         <div class="dashboard">
           <div class="card">
+            <h2>룰렛 결과 통계</h2>
+            <div class="download-button-container">
+              <button id="downloadRouletteBtn" class="download-button">CSV 다운로드</button>
+            </div>
+            <div class="table-container">
+              <div id="rouletteGrid">
+                <!-- Roulette data will be inserted here -->
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
             <h2>후원 순위 (후원개수 기준)</h2>
             <div class="download-button-container">
               <button id="downloadDonationBtn" class="download-button">CSV 다운로드</button>
@@ -222,18 +234,6 @@
                   <!-- Donation data will be inserted here -->
                 </tbody>
               </table>
-            </div>
-          </div>
-
-          <div class="card">
-            <h2>룰렛 결과 통계</h2>
-            <div class="download-button-container">
-              <button id="downloadRouletteBtn" class="download-button">CSV 다운로드</button>
-            </div>
-            <div class="table-container">
-              <div id="rouletteGrid">
-                <!-- Roulette data will be inserted here -->
-              </div>
             </div>
           </div>
         </div>
