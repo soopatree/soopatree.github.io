@@ -25,22 +25,31 @@ jobs:
       
     - name: Bundle HTML, CSS, and JS files
       run: |
-        # HTML, CSS, JS 파일 읽기
-        HTML_CONTENT=$(cat index.html)
-        CSS_CONTENT=$(cat style.css)
-        JS_CONTENT=$(cat script.js)
-        
-        # CSS와 JS 파일 참조를 인라인 코드로 교체
-        # <link rel="stylesheet" href="style.css" /> 태그를 <style>...</style>로 교체
-        HTML_WITH_CSS=$(echo "$HTML_CONTENT" | sed 's|<link rel="stylesheet" href="style.css" />|<style>\n'"$CSS_CONTENT"'\n</style>|g')
-        
-        # <script src="script.js"></script> 태그를 <script>...</script>로 교체
-        BUNDLED_HTML=$(echo "$HTML_WITH_CSS" | sed 's|<script src="script.js"></script>|<script>\n'"$JS_CONTENT"'\n</script>|g')
-        
-        # 최종 HTML 파일 저장
-        echo "$BUNDLED_HTML" > dist/index.html
-        
-        echo "HTML, CSS, JS 파일을 성공적으로 번들링했습니다."
+        # 간단한 Node.js 스크립트를 사용하여 파일 병합
+        node -e "
+          const fs = require('fs');
+          
+          // 파일 읽기
+          const html = fs.readFileSync('index.html', 'utf8');
+          const css = fs.readFileSync('style.css', 'utf8');
+          const js = fs.readFileSync('script.js', 'utf8');
+          
+          // CSS와 JS 삽입
+          let result = html.replace(
+            '<link rel=\"stylesheet\" href=\"style.css\" />',
+            '<style>' + css + '</style>'
+          );
+          
+          result = result.replace(
+            '<script src=\"script.js\"></script>',
+            '<script>' + js + '</script>'
+          );
+          
+          // 결과 저장
+          fs.writeFileSync('dist/index.html', result);
+          
+          console.log('HTML, CSS, JS 파일을 성공적으로 번들링했습니다.');
+        "
         
     - name: Upload bundled file as artifact
       uses: actions/upload-artifact@v4
