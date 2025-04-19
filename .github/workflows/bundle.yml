@@ -2,47 +2,54 @@ name: Bundle HTML, CSS, and JS
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
-  workflow_dispatch: # 수동으로 워크플로우를 실행할 수 있는 옵션
+    branches: [ main ]
+  workflow_dispatch:  # 수동으로 워크플로우를 실행할 수 있는 옵션
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18"
-
-      - name: Create dist directory
-        run: mkdir -p dist
-
-      - name: Bundle HTML, CSS, and JS files
-        run: |
-          # HTML, CSS, JS 파일 읽기
-          HTML_CONTENT=$(cat index.html)
-          CSS_CONTENT=$(cat style.css)
-          JS_CONTENT=$(cat script.js)
-
-          HTML_WITH_CSS=$(echo "$HTML_CONTENT" | sed 's|<link rel="stylesheet" href="style.css" />|<style>\n'"$CSS_CONTENT"'\n</style>|g')
-          BUNDLED_HTML=$(echo "$HTML_WITH_CSS" | sed 's|<script src="script.js"></script>|<script>\n'"$JS_CONTENT"'\n</script>|g')
-
-          echo "$BUNDLED_HTML" > dist/index.html
-
-      - name: Upload bundled file as artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: bundled-file
-          path: dist/index.html
-
-      - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          folder: dist
-          branch: main
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Create dist directory
+      run: mkdir -p dist
+      
+    - name: Bundle HTML, CSS, and JS files
+      run: |
+        # HTML, CSS, JS 파일 읽기
+        HTML_CONTENT=$(cat index.html)
+        CSS_CONTENT=$(cat style.css)
+        JS_CONTENT=$(cat script.js)
+        
+        # CSS와 JS 파일 참조를 인라인 코드로 교체
+        # <link rel="stylesheet" href="style.css" /> 태그를 <style>...</style>로 교체
+        HTML_WITH_CSS=$(echo "$HTML_CONTENT" | sed 's|<link rel="stylesheet" href="style.css" />|<style>\n'"$CSS_CONTENT"'\n</style>|g')
+        
+        # <script src="script.js"></script> 태그를 <script>...</script>로 교체
+        BUNDLED_HTML=$(echo "$HTML_WITH_CSS" | sed 's|<script src="script.js"></script>|<script>\n'"$JS_CONTENT"'\n</script>|g')
+        
+        # 최종 HTML 파일 저장
+        echo "$BUNDLED_HTML" > dist/index.html
+        
+        echo "HTML, CSS, JS 파일을 성공적으로 번들링했습니다."
+        
+    - name: Upload bundled file as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: bundled-file
+        path: dist/index.html
+        
+    - name: Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        folder: dist  # 배포할 폴더
+        branch: gh-pages  # 배포될 브랜치
