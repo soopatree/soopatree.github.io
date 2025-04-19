@@ -7,9 +7,16 @@ on:
     branches: [ main ]
   workflow_dispatch:  # 수동으로 워크플로우를 실행할 수 있는 옵션
 
-# GitHub Actions에 저장소 쓰기 권한 부여
+# GitHub Actions에 권한 부여
 permissions:
-  contents: write
+  contents: read
+  pages: write      # GitHub Pages 배포 권한
+  id-token: write  # OIDC 토큰 생성 권한
+  
+# GitHub Pages 환경 설정
+env:
+  # 기본 환경을 'github-pages'로 설정
+  GITHUB_PAGES_ENVIRONMENT: github-pages
 
 jobs:
   build:
@@ -78,9 +85,19 @@ jobs:
         name: bundled-file
         path: dist/index.html
         
-    - name: Deploy to GitHub Pages
-      uses: JamesIves/github-pages-deploy-action@v4
+    - name: Upload Pages artifact
+      uses: actions/upload-pages-artifact@v3
       with:
-        folder: dist  # 배포할 폴더
-        branch: gh-pages  # 배포될 브랜치
-        token: ${{ github.token }}  # GitHub Actions 토큰 사용
+        path: dist
+
+  # 별도 작업으로 나누어 배포
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
