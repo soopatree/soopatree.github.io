@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- 배경 원 -->
+  <circle cx="32" cy="32" r="30" fill="#3498db" />
+  
+  <!-- 내부 원 (도넛 형태) -->
+  <circle cx="32" cy="32" r="24" fill="#2980b9" />
+  <circle cx="32" cy="32" r="18" fill="#3498db" />
+  
+  <!-- 차트 막대그래프 -->
+  <rect x="18" y="36" width="4" height="8" fill="#ecf0f1" rx="1" />
+  <rect x="24" y="32" width="4" height="12" fill="#ecf0f1" rx="1" />
+  <rect x="30" y="28" width="4" height="16" fill="#ecf0f1" rx="1" />
+  <rect x="36" y="24" width="4" height="20" fill="#ecf0f1" rx="1" />
+  <rect x="42" y="30" width="4" height="14" fill="#ecf0f1" rx="1" />
+  
+  <!-- 화폐 기호 -->
+  <text x="32" y="22" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#ecf0f1" text-anchor="middle">₩</text>
+</svg>

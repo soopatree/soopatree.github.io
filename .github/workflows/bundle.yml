@@ -27,6 +27,23 @@ jobs:
     - name: Create dist directory
       run: mkdir -p dist
       
+    - name: Install imagemagick for favicon conversion
+      run: sudo apt-get update && sudo apt-get install -y imagemagick
+        
+    - name: Create favicon.ico from SVG
+      run: |
+        # SVG를 PNG로 변환 (여러 크기)
+        mkdir -p temp_favicon
+        convert -background none -size 16x16 favicon.svg temp_favicon/favicon-16.png
+        convert -background none -size 32x32 favicon.svg temp_favicon/favicon-32.png
+        convert -background none -size 48x48 favicon.svg temp_favicon/favicon-48.png
+        
+        # PNG들을 하나의 ICO 파일로 통합
+        convert temp_favicon/favicon-16.png temp_favicon/favicon-32.png temp_favicon/favicon-48.png dist/favicon.ico
+        
+        # SVG도 dist 디렉토리로 복사
+        cp favicon.svg dist/
+    
     - name: Bundle HTML, CSS, and JS files
       run: |
         # 간단한 Node.js 스크립트를 사용하여 파일 병합
