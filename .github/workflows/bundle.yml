@@ -7,6 +7,10 @@ on:
     branches: [ main ]
   workflow_dispatch:  # 수동으로 워크플로우를 실행할 수 있는 옵션
 
+# GitHub Actions에 저장소 쓰기 권한 부여
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -62,3 +66,4 @@ jobs:
       with:
         folder: dist  # 배포할 폴더
         branch: gh-pages  # 배포될 브랜치
+        token: ${{ github.token }}  # GitHub Actions 토큰 사용
