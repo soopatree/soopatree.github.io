@@ -1,0 +1,48 @@
+name: Bundle HTML, CSS, and JS
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: # 수동으로 워크플로우를 실행할 수 있는 옵션
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Create dist directory
+        run: mkdir -p dist
+
+      - name: Bundle HTML, CSS, and JS files
+        run: |
+          # HTML, CSS, JS 파일 읽기
+          HTML_CONTENT=$(cat index.html)
+          CSS_CONTENT=$(cat style.css)
+          JS_CONTENT=$(cat script.js)
+
+          HTML_WITH_CSS=$(echo "$HTML_CONTENT" | sed 's|<link rel="stylesheet" href="style.css" />|<style>\n'"$CSS_CONTENT"'\n</style>|g')
+          BUNDLED_HTML=$(echo "$HTML_WITH_CSS" | sed 's|<script src="script.js"></script>|<script>\n'"$JS_CONTENT"'\n</script>|g')
+
+          echo "$BUNDLED_HTML" > dist/index.html
+
+      - name: Upload bundled file as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: bundled-file
+          path: dist/index.html
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist
+          branch: main
