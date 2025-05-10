@@ -4,12 +4,11 @@
  * @param {Function} processCSVData - CSV 데이터 처리 함수
  */
 export function parseCSV(file, processCSVData) {
-  console.log('파일 파싱 시작:', file.name);
   const reader = new FileReader();
 
   reader.onload = function (e) {
     try {
-      // 파일 인코딩 처리 (UTF-8 혹은 EUC-KR)
+      // 파일 내용 가져오기
       let contents = e.target.result;
       
       // BOM(Byte Order Mark) 제거
@@ -17,16 +16,13 @@ export function parseCSV(file, processCSVData) {
         contents = contents.slice(1);
       }
       
-      console.log('파일 내용 샘플:', contents.substring(0, 200));
-      
       // 파일에 '별풍선' 문자열이 포함되어 있는지 확인
       if (contents.indexOf('별풍선') === -1) {
-        // 형식이 맞지 않을 경우 알림
         alert("지원되는 CSV 형식이 아닙니다. '별풍선' 항목이 포함된 CSV 파일을 업로드해주세요.");
         return;
       }
       
-      // 개선된 CSV 파싱 메소드 호출
+      // CSV 파싱 메소드 호출
       processCSVData(contents);
     } catch (err) {
       console.error("CSV 파싱 중 오류 발생:", err);
@@ -39,9 +35,8 @@ export function parseCSV(file, processCSVData) {
     alert("파일을 읽는 중 오류가 발생했습니다.");
   };
 
-  // 먼저 UTF-8로 시도
+  // UTF-8 인코딩으로 파일 읽기
   reader.readAsText(file, "UTF-8");
-  console.log('파일 읽기 요청 완료');
 }
 
 /**
@@ -51,10 +46,7 @@ export function parseCSV(file, processCSVData) {
  */
 export function extractProbability(text) {
   const match = text.match(/\(([0-9.]+)%\)/);
-  if (match && match[1]) {
-    return parseFloat(match[1]);
-  }
-  return 0; // 확률 정보가 없으면 0으로 처리
+  return match && match[1] ? parseFloat(match[1]) : 0;
 }
 
 /**
@@ -88,7 +80,6 @@ export function parseCSVLine(line) {
   
   // 따옴표 제거 및 트림 처리
   return result.map(field => {
-    // 필드 앞뒤 따옴표 제거 및 공백 제거
     field = field.trim();
     if (field.startsWith('"') && field.endsWith('"')) {
       field = field.substring(1, field.length - 1);
@@ -107,17 +98,15 @@ export function downloadCSV(csvContent, fileName) {
     // BOM 추가하여 UTF-8로 인코딩 (Excel에서 한글 인코딩 문제 해결)
     const csvUTF8 = new Blob([new Uint8Array([0xef, 0xbb, 0xbf]), csvContent], { type: "text/csv;charset=utf-8;" });
 
-    // Create a download link
+    // 다운로드 링크 생성
     const link = document.createElement("a");
     link.href = URL.createObjectURL(csvUTF8);
     link.download = fileName;
 
-    // Trigger download
+    // 다운로드 트리거
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
-    console.log(`파일 다운로드 성공: ${fileName}`);
   } catch (err) {
     console.error("CSV 다운로드 중 오류 발생:", err);
     alert("CSV 파일 다운로드 중 오류가 발생했습니다.");

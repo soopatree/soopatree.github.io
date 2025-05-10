@@ -6,16 +6,15 @@
 export function updateDonationTable(donationTableBody, donations) {
   donationTableBody.innerHTML = "";
   
-  // null 체크
+  // 데이터 유효성 검사
   if (!donations || !Array.isArray(donations) || donations.length === 0) {
-    console.log('후원 데이터가 없거나 유효하지 않습니다:', donations);
     return;
   }
   
   donations.forEach((donation, index) => {
     const row = document.createElement("tr");
 
-    // Format nicknames with asterisks for multiple names
+    // 여러 닉네임이 있을 경우 * 표시로 구분
     const nicknamesArray = Array.from(donation.nicknames);
     let nicknameDisplay = nicknamesArray[0] + "(" + donation.id + ")";
 
@@ -42,30 +41,15 @@ export function updateDonationTable(donationTableBody, donations) {
  */
 export function updateRouletteGrid(rouletteGrid, processedRoulette, setupDragDropForHeaders, swapColumns, updateRouletteResultsOrder) {
   // 매개변수 유효성 검사
-  if (!rouletteGrid) {
-    console.error('rouletteGrid 엘리먼트가 유효하지 않습니다');
-    return;
-  }
+  if (!rouletteGrid) return;
 
-  // 객체 구조 분해 할당
+  // 데이터 구조 분해 할당
   const { 
     results: sortedResults = [], 
     rouletteByDonor = {}, 
-    donors: donorsByResult = {}, 
     donorsById = {}, 
     resultProbabilities = {} 
   } = processedRoulette || {};
-
-  // 디버깅 정보 출력
-  console.log('룰렛 데이터 디버깅:', {
-    '결과 수': sortedResults.length,
-    '후원자별 룰렛 데이터 키 수': Object.keys(rouletteByDonor).length,
-    '후원자 데이터 키 수': Object.keys(donorsById).length,
-    '확률 데이터 키 수': Object.keys(resultProbabilities).length
-  });
-  
-  console.log('후원자 ID들:', Object.keys(donorsById).slice(0, 5), '...');
-  console.log('룰렛 데이터 키들:', Object.keys(rouletteByDonor).slice(0, 5), '...');
   
   // HTML 초기화
   rouletteGrid.innerHTML = "";
@@ -108,27 +92,16 @@ export function updateRouletteGrid(rouletteGrid, processedRoulette, setupDragDro
   
   // 각 후원자에 대한 룰렛 결과 행 생성
   if (Object.keys(donorsById).length > 0 && Object.keys(rouletteByDonor).length > 0) {
-    // 테이블 데이터 생성 - 원본 코드와 다른 접근 방식
     const donorIds = Object.keys(donorsById);
     
-    console.log(`테이블 행 추가 시작: ${donorIds.length}명의 후원자`);
-    
-    donorIds.forEach((donorId, idx) => {
+    donorIds.forEach(donorId => {
       const donor = donorsById[donorId];
       
       // 이 후원자의 룰렛 데이터가 있는지 확인
       const donorRouletteData = rouletteByDonor[donorId];
       
-      // 디버깅을 위한 조건부 로깅
-      if (idx < 3 || idx === donorIds.length - 1) {
-        console.log(`[${idx+1}/${donorIds.length}] ${donorId}의 룰렛 데이터:`, donorRouletteData);
-      }
-      
       // 룰렛 데이터가 없으면 건너뛰기
-      if (!donorRouletteData) {
-        console.log(`[${idx+1}/${donorIds.length}] ${donorId}의 룰렛 데이터가 없습니다`);
-        return;
-      }
+      if (!donorRouletteData) return;
       
       // 행 생성
       const row = document.createElement("tr");
@@ -150,7 +123,6 @@ export function updateRouletteGrid(rouletteGrid, processedRoulette, setupDragDro
         const cell = document.createElement("td");
         cell.setAttribute("data-result", result);
         
-        // donorRouletteData[result]가 undefined일 수 있음
         const count = donorRouletteData[result] || 0;
         
         if (count > 0) {
@@ -166,13 +138,6 @@ export function updateRouletteGrid(rouletteGrid, processedRoulette, setupDragDro
       // 행을 테이블에 추가
       tbody.appendChild(row);
     });
-    
-    console.log('테이블 행 추가 완료');
-  } else {
-    console.log('표시할 룰렛 데이터가 없습니다:', {
-      donorsById: Object.keys(donorsById).length,
-      rouletteByDonor: Object.keys(rouletteByDonor).length
-    });
   }
   
   table.appendChild(tbody);
@@ -180,6 +145,4 @@ export function updateRouletteGrid(rouletteGrid, processedRoulette, setupDragDro
   
   // 드래그 앤 드롭 기능 활성화
   setupDragDropForHeaders(table, swapColumns, updateRouletteResultsOrder);
-  
-  console.log('룰렛 그리드 업데이트 완료');
 }

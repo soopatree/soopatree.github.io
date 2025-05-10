@@ -17,6 +17,7 @@ import { initDateFilter } from './modules/dateFilter';
 document.addEventListener("DOMContentLoaded", function () {
   // DOM 요소 참조
   const dropZone = document.getElementById("dropZone");
+  const mockup = document.getElementById("mockup");
   const results = document.getElementById("results");
   const donationTableBody = document.getElementById("donationTableBody");
   const rouletteGrid = document.getElementById("rouletteGrid");
@@ -40,23 +41,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // 전역 필터링 함수 정의
   function checkDateInRange(dateStr) {
-    // dateFilterInstance가 없을 때는 모든 날짜 포함
-    if (!dateFilterInstance) return true;
-    return dateFilterInstance.isDateInRange(dateStr);
+    return !dateFilterInstance ? true : dateFilterInstance.isDateInRange(dateStr);
   }
 
   // 파일 드롭 처리 함수
   function handleDrop(e) {
-    const dt = e.dataTransfer;
-    const files = dt.files;
-
-    if (files.length) {
-      const file = files[0];
-      if (file.type === "text/csv" || file.name.endsWith(".csv")) {
-        handleCSVFile(file);
-      } else {
-        alert("CSV 파일만 지원됩니다.");
-      }
+    const file = e.dataTransfer.files[0];
+    if (file && (file.type === "text/csv" || file.name.endsWith(".csv"))) {
+      handleCSVFile(file);
+    } else {
+      alert("CSV 파일만 지원됩니다.");
     }
   }
 
@@ -64,6 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function handleCSVFile(file) {
     parseCSV(file, handleProcessedCSVData);
   }
+  
   // 처리된 CSV 데이터 핸들링 함수
   function handleProcessedCSVData(csvContent) {
     // 원본 CSV 데이터 저장
@@ -75,12 +70,11 @@ document.addEventListener("DOMContentLoaded", function () {
     // 날짜 필터링 초기화
     dateFilterInstance = initDateFilter({
       csvContent: originalCSVContent,
-      onFilterChange: (filter) => {
-        console.log('필터 변경 찐지:', filter);
-        // 필터 변경 시 CSV 데이터 재처리
-        processFilteredData(originalCSVContent);
-      }
+      onFilterChange: () => processFilteredData(originalCSVContent)
     });
+    
+    // 목업 영역 숨기기
+    mockup.style.display = "none";
     
     // 결과 표시
     results.style.display = "block";
@@ -90,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function processFilteredData(csvContent) {
     // CSV 데이터 처리 (필터링 함수 설정)
     processedData = processCSVData(csvContent, {
-      isDateInRange: checkDateInRange // 전역 필터링 함수 사용
+      isDateInRange: checkDateInRange
     });
     
     // UI 업데이트
@@ -107,10 +101,10 @@ document.addEventListener("DOMContentLoaded", function () {
     downloadDonationBtn.disabled = false;
     downloadRouletteBtn.disabled = false;
     
-    // 날짜 정보 표시 업데이트 - 필터링된 데이터 개수와 총 개수 표시
+    // 날짜 정보 표시 업데이트
     if (dateFilterInstance) {
       dateFilterInstance.updateDateInfo(
-        processedData.stats.totalProcessed,  // 필터링된 후 처리된 데이터 개수 (수정됨)
+        processedData.stats.totalProcessed,
         processedData.stats.totalRows,
         processedData.stats.minDate,
         processedData.stats.maxDate
@@ -124,10 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 헤더의 현재 순서 가져오기
     const headers = document.querySelectorAll(".roulette-table th.draggable-header");
-    const newOrder = Array.from(headers).map((header) => header.getAttribute("data-result"));
-
-    // 결과 배열 업데이트
-    processedData.results = newOrder;
+    processedData.results = Array.from(headers).map((header) => header.getAttribute("data-result"));
   }
 
   // 후원 데이터 CSV 다운로드 함수
@@ -148,17 +139,13 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    // 최신 순서로 업데이트
     updateRouletteResultsOrder();
-
     const csvContent = generateRouletteCSV(processedData);
     downloadCSV(csvContent, "룰렛결과통계.csv");
   }
 
   // 이벤트 리스너 설정
   setupDragAndDrop(dropZone, handleDrop);
-
-  // 다운로드 버튼 이벤트 리스너
   downloadDonationBtn.addEventListener("click", downloadDonationCSV);
   downloadRouletteBtn.addEventListener("click", downloadRouletteCSV);
 

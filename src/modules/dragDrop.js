@@ -35,13 +35,13 @@ export function unhighlight(dropZone) {
  * @param {Function} handleDrop - 파일 드롭 처리 함수
  */
 export function setupDragAndDrop(dropZone, handleDrop) {
-  // Prevent default drag behaviors
+  // 기본 드래그 동작 방지
   ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
     dropZone.addEventListener(eventName, preventDefaults, false);
     document.body.addEventListener(eventName, preventDefaults, false);
   });
 
-  // Highlight drop zone when dragging over it
+  // 드롭존에 드래그 시 하이라이트
   ["dragenter", "dragover"].forEach((eventName) => {
     dropZone.addEventListener(eventName, highlight(dropZone), false);
   });
@@ -50,7 +50,7 @@ export function setupDragAndDrop(dropZone, handleDrop) {
     dropZone.addEventListener(eventName, unhighlight(dropZone), false);
   });
 
-  // Handle dropped files
+  // 파일 드롭 처리
   dropZone.addEventListener("drop", handleDrop, false);
 }
 
@@ -63,64 +63,58 @@ export function setupDragAndDrop(dropZone, handleDrop) {
 export function setupDragDropForHeaders(table, swapColumns, updateRouletteResultsOrder) {
   const headers = table.querySelectorAll("th.draggable-header");
   let draggedHeader = null;
-  let placeholder = null;
 
   headers.forEach((header) => {
-    // Dragstart event
+    // 드래그 시작 이벤트
     header.addEventListener("dragstart", function (e) {
       draggedHeader = this;
       this.classList.add("dragging");
 
-      // Create a placeholder element for the dragged header
-      placeholder = document.createElement("div");
-      placeholder.classList.add("header-placeholder");
-      placeholder.textContent = this.textContent;
-
-      // Set some data for the drag operation
+      // 드래그 작업을 위한 데이터 설정
       e.dataTransfer.setData("text/plain", this.textContent);
       e.dataTransfer.effectAllowed = "move";
 
-      // Create a custom drag image (optional)
+      // 커스텀 드래그 이미지 생성
       const dragImage = this.cloneNode(true);
       dragImage.style.display = "inline-block";
       dragImage.style.opacity = "0.7";
       document.body.appendChild(dragImage);
       e.dataTransfer.setDragImage(dragImage, 0, 0);
 
-      // Remove the drag image after it's no longer needed
+      // 드래그 이미지 제거
       setTimeout(() => {
         document.body.removeChild(dragImage);
       }, 0);
     });
 
-    // Dragend event
+    // 드래그 종료 이벤트
     header.addEventListener("dragend", function () {
       this.classList.remove("dragging");
       draggedHeader = null;
     });
 
-    // Dragover event
+    // 드래그 오버 이벤트
     header.addEventListener("dragover", function (e) {
       e.preventDefault();
       e.dataTransfer.dropEffect = "move";
       this.classList.add("drag-over");
     });
 
-    // Dragleave event
+    // 드래그 리브 이벤트
     header.addEventListener("dragleave", function () {
       this.classList.remove("drag-over");
     });
 
-    // Drop event
+    // 드롭 이벤트
     header.addEventListener("drop", function (e) {
       e.preventDefault();
       this.classList.remove("drag-over");
 
       if (draggedHeader && draggedHeader !== this) {
-        // Swap the columns
+        // 컬럼 교체
         swapColumns(table, draggedHeader, this);
 
-        // Update the download order
+        // 다운로드 순서 업데이트
         updateRouletteResultsOrder();
       }
     });
@@ -137,33 +131,33 @@ export function swapColumns(table, fromHeader, toHeader) {
   const fromIndex = parseInt(fromHeader.getAttribute("data-index"));
   const toIndex = parseInt(toHeader.getAttribute("data-index"));
 
-  // Update the data-index attributes
+  // data-index 속성 업데이트
   fromHeader.setAttribute("data-index", toIndex);
   toHeader.setAttribute("data-index", fromIndex);
 
-  // Get all rows (including the header row)
+  // 모든 행 가져오기 (헤더 행 포함)
   const rows = table.querySelectorAll("tr");
 
-  // For each row, swap the cells at the given indices
+  // 각 행에서 지정된 인덱스의 셀 교체
   rows.forEach((row) => {
     const cells = row.querySelectorAll("th, td");
 
-    // Skip if there aren't enough cells
+    // 셀이 충분하지 않으면 건너뛰기
     if (cells.length <= Math.max(fromIndex, toIndex)) return;
 
-    // Swap the cells
+    // 셀 교체
     const fromCell = cells[fromIndex];
     const toCell = cells[toIndex];
 
-    // Create a temporary marker
+    // 임시 마커 생성
     const temp = document.createElement("div");
     row.insertBefore(temp, fromCell);
 
-    // Move the cells
+    // 셀 이동
     row.insertBefore(fromCell, toCell);
     row.insertBefore(toCell, temp);
 
-    // Remove the temporary marker
+    // 임시 마커 제거
     row.removeChild(temp);
   });
 }

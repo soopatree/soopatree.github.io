@@ -1,3 +1,25 @@
+/* 목업 세팅 */
+.mockup {
+  margin-top: 30px;
+}
+
+.mockup-notice {
+  margin-top: 20px;
+  padding: 12px;
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+  border-radius: 6px;
+  text-align: center;
+  color: #856404;
+  font-size: 14px;
+}
+
+.mockup button:disabled,
+.mockup input:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -287,4 +309,16 @@ tr:hover {
     width: 100%;
     margin-top: 10px;
   }
+}
+
+/* 개인정보 처리 공지 스타일 */
+.privacy-notice {
+  margin-top: 30px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 14px;
+  color: #6c757d;
+  border-top: 1px solid #e9ecef;
 }

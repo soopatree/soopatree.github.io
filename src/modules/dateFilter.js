@@ -10,7 +10,7 @@ export function formatDate(date) {
   return `${year}-${month}-${day}`;
 }
 
-// 전역 변수로 날짜 필터 상태 선언
+// 전역 날짜 필터 상태
 let globalFilterState = {
   startDate: null,
   endDate: null,
@@ -27,7 +27,7 @@ export function isDateInRange(dateStr) {
     return true; // 필터가 없으면 모든 날짜 통과
   }
   
-  // 날짜 문자열 파싱 ("2025-04-19 14:30:15" 형식 가정)
+  // 날짜 문자열 파싱
   const dateParts = dateStr.split(' ')[0].split('-');
   if (dateParts.length !== 3) return false;
   
@@ -37,13 +37,13 @@ export function isDateInRange(dateStr) {
   
   const date = new Date(year, month, day);
   
-  // 시작 날짜와 종료 날짜 검사
+  // 날짜 범위 확인
   if (globalFilterState.startDate && date < globalFilterState.startDate) {
     return false;
   }
   
   if (globalFilterState.endDate) {
-    // 종료일 포함을 위해 종료일의 다음날 00시와 비교
+    // 종료일 포함을 위해 종료일의 다음날과 비교
     const nextDay = new Date(globalFilterState.endDate);
     nextDay.setDate(nextDay.getDate() + 1);
     if (date >= nextDay) return false;
@@ -54,17 +54,11 @@ export function isDateInRange(dateStr) {
 
 // 날짜 문자열 파싱 함수
 export function parseDate(dateStr) {
-  // 기본 패턴: "2023-05-10 14:30:15" 또는 "2023-05-10"
   if (!dateStr) return null;
   
   try {
-    // 공백을 기준으로 날짜와 시간 분리
     const datePart = dateStr.split(' ')[0];
-    
-    // 날짜 부분 파싱
     const [year, month, day] = datePart.split('-').map(num => parseInt(num, 10));
-    
-    // JavaScript의 월은 0부터 시작하므로 1을 뺄
     return new Date(year, month - 1, day);
   } catch (error) {
     console.error('날짜 파싱 오류:', error);
@@ -79,6 +73,7 @@ export function formatKoreanDate(date) {
   const day = date.getDate();
   return `${year}년 ${month}월 ${day}일`;
 }
+
 /**
  * 날짜 필터링 초기화 및 이벤트 설정 함수
  * @param {Object} options - 필터링 옵션
@@ -105,7 +100,7 @@ export function initDateFilter(options = {}) {
     activeFilter: 'all'
   };
 
-  // 현재 날짜 (실제 애플리케이션에서는 동적으로 가져옴)
+  // 현재 날짜
   const today = new Date();
   
   // 필터 버튼 활성화 함수
@@ -166,16 +161,13 @@ export function initDateFilter(options = {}) {
         endDate = today;
         break;
       case 'customrange':
-        // 기간지정 버튼 클릭 시, 시작일과 종료일 입력 필드에 집중
         if (!startDateInput.value && !endDateInput.value) {
-          // 입력값이 없으면 현재 상태 유지
           return;
         }
         startDate = startDateInput.value ? new Date(startDateInput.value) : null;
         endDate = endDateInput.value ? new Date(endDateInput.value) : null;
         break;
       default:
-        // 직접 입력한 경우
         startDate = startDateInput.value ? new Date(startDateInput.value) : null;
         endDate = endDateInput.value ? new Date(endDateInput.value) : null;
     }
@@ -202,7 +194,7 @@ export function initDateFilter(options = {}) {
     globalFilterState.endDate = endDate;
     globalFilterState.activeFilter = filterState.activeFilter;
     
-    // 날짜 정보 표시 - 개수 정보는 나중에 업데이트됨
+    // 날짜 정보 표시
     updateDateInfo();
     
     // 콜백 호출
@@ -221,32 +213,19 @@ export function initDateFilter(options = {}) {
       const startDateStr = formatKoreanDate(filterState.startDate);
       const endDateStr = formatKoreanDate(filterState.endDate);
       
-      // 필터링 타입에 따라 다른 메시지 표시
+      // 필터링 타입에 따른 메시지
       let filterTypeText = '';
       switch (filterState.activeFilter) {
-        case '1day':
-          filterTypeText = '(최근 1일)';
-          break;
-        case '7days':
-          filterTypeText = '(최근 1주일)';
-          break;
-        case '30days':
-          filterTypeText = '(최근 1개월)';
-          break;
-        case '90days':
-          filterTypeText = '(최근 3개월)';
-          break;
-        case '365days':
-          filterTypeText = '(최근 1년)';
-          break;
-        case 'customrange':
-          filterTypeText = '(지정 기간)';
-          break;
-        default:
-          filterTypeText = '';
+        case '1day': filterTypeText = '(최근 1일)'; break;
+        case '7days': filterTypeText = '(최근 1주일)'; break;
+        case '30days': filterTypeText = '(최근 1개월)'; break;
+        case '90days': filterTypeText = '(최근 3개월)'; break;
+        case '365days': filterTypeText = '(최근 1년)'; break;
+        case 'customrange': filterTypeText = '(지정 기간)'; break;
+        default: filterTypeText = '';
       }
       
-      // 필터링된 개수 표시 추가
+      // 필터링된 개수 표시
       let countText = '';
       if (filteredCount !== undefined && totalCount !== undefined) {
         countText = ` [${filteredCount}/${totalCount} 개]`;
@@ -262,7 +241,7 @@ export function initDateFilter(options = {}) {
         dateRangeText = ` (${minDateStr} ~ ${maxDateStr})`;
       }
       
-      // 필터링된 개수 표시 추가
+      // 필터링된 개수 표시
       let countText = '';
       if (filteredCount !== undefined && totalCount !== undefined) {
         countText = ` [${filteredCount}/${totalCount} 개]`;
@@ -270,11 +249,6 @@ export function initDateFilter(options = {}) {
       
       dateInfoEl.textContent = `현재 통계: 전체 기간${dateRangeText}${countText}`;
     }
-  }
-  
-  // 날짜 필터링이 가능한지 확인하는 함수 - 내부 함수
-  function checkDateInRange(dateStr) {
-    return isDateInRange(dateStr); // 전역 함수 호출
   }
   
   // 이벤트 리스너 등록
@@ -338,9 +312,9 @@ export function initDateFilter(options = {}) {
   // 인터페이스 반환
   return {
     applyFilter: applyDateFilter,
-    isDateInRange, // 전역 함수 반환
+    isDateInRange,
     getFilterState: () => ({ ...filterState }),
-    updateDateInfo, // 날짜 정보 업데이트 함수 외부 노출
+    updateDateInfo,
     resetFilter: () => {
       setActiveFilter('filterAll');
       applyDateFilter();

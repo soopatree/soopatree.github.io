@@ -13,6 +13,134 @@
         <p>CSV 파일을 여기에 끌어다 놓거나 클릭하여 업로드하세요</p>
       </div>
 
+      <!-- 목업 데이터 영역 - 파일 업로드 전에 표시 -->
+      <div class="mockup" id="mockup">
+        <div class="filter-section">
+          <h3>날짜 필터링</h3>
+          <div class="date-range">
+            <div class="date-inputs">
+              <div class="date-field">
+                <label for="mockStartDate">시작 날짜:</label>
+                <input type="date" id="mockStartDate" name="mockStartDate" disabled />
+              </div>
+              <div class="date-field">
+                <label for="mockEndDate">종료 날짜:</label>
+                <input type="date" id="mockEndDate" name="mockEndDate" disabled />
+              </div>
+            </div>
+            <div class="quick-filters">
+              <button class="filter-button active" disabled>전체</button>
+              <button class="filter-button" disabled>1일전</button>
+              <button class="filter-button" disabled>1주일전</button>
+              <button class="filter-button" disabled>1개월전</button>
+              <button class="filter-button" disabled>3개월전</button>
+              <button class="filter-button" disabled>1년전</button>
+              <button class="filter-button" disabled>기간지정</button>
+              <button class="filter-button apply" disabled>적용</button>
+            </div>
+          </div>
+          <div class="date-info">
+            <p>2025-04-13 ~ 2025-04-16 [예시 데이터 100/100 개]</p>
+          </div>
+        </div>
+        <div class="dashboard">
+          <div class="card">
+            <h2>룰렛 결과 통계</h2>
+            <div class="download-button-container">
+              <button class="download-button" disabled>CSV 다운로드</button>
+            </div>
+            <div class="table-container">
+              <table class="roulette-table">
+                <thead>
+                  <tr>
+                    <th>후원자</th>
+                    <th class="draggable-header" data-result="응원 메시지">응원 메시지</th>
+                    <th class="draggable-header" data-result="이모티콘 사용">이모티콘 사용</th>
+                    <th class="draggable-header" data-result="캠릭터 춤추기">캠릭터 춤추기</th>
+                    <th class="draggable-header" data-result="한번 더">한번 더</th>
+                    <th class="draggable-header" data-result="꼬피">꼬피</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>이성계(partner9568)</td>
+                    <td>0</td>
+                    <td>1</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>2</td>
+                  </tr>
+                  <tr>
+                    <td>김춘추(cheerleader3397)</td>
+                    <td>1</td>
+                    <td>0</td>
+                    <td>1</td>
+                    <td>0</td>
+                    <td>1</td>
+                  </tr>
+                  <tr>
+                    <td>정약용(viewer8203)</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>1</td>
+                    <td>2</td>
+                    <td>0</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>후원 순위 (후원개수 기준)</h2>
+            <div class="download-button-container">
+              <button class="download-button" disabled>CSV 다운로드</button>
+            </div>
+            <div class="table-container">
+              <table id="mockDonationTable">
+                <thead>
+                  <tr>
+                    <th>순위</th>
+                    <th>후원자</th>
+                    <th>후원개수</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="rank">1</span></td>
+                    <td>신사임당(admirer4844)</td>
+                    <td>45</td>
+                  </tr>
+                  <tr>
+                    <td><span class="rank">2</span></td>
+                    <td>이성계(partner9568)</td>
+                    <td>33</td>
+                  </tr>
+                  <tr>
+                    <td><span class="rank">3</span></td>
+                    <td>윤동주(member4983)</td>
+                    <td>23</td>
+                  </tr>
+                  <tr>
+                    <td><span class="rank">4</span></td>
+                    <td>김춘추(cheerleader3397)</td>
+                    <td>15</td>
+                  </tr>
+                  <tr>
+                    <td><span class="rank">5</span></td>
+                    <td>정약용(viewer8203)</td>
+                    <td>12</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="mockup-notice">
+          <p>데이터는 예시입니다. 실제 데이터를 보려면 CSV 파일을 업로드하세요.</p>
+        </div>
+      </div>
+
       <div class="results" id="results">
         <div class="filter-section">
           <h3>날짜 필터링</h3>
@@ -76,6 +204,10 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <div class="privacy-notice">
+        <p>모든 처리는 사용자의 브라우저에서만 이루어지며, 데이터가 외부로 전송되지 않습니다.</p>
       </div>
     </div>
   </body>
