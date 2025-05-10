@@ -12,6 +12,7 @@ import {
   generateRouletteCSV 
 } from './modules/dataProcessor';
 import { updateDonationTable, updateRouletteGrid } from './modules/ui';
+import { initDateFilter } from './modules/dateFilter';
 
 document.addEventListener("DOMContentLoaded", function () {
   // DOM 요소 참조
@@ -30,6 +31,19 @@ document.addEventListener("DOMContentLoaded", function () {
     donorsById: {},
     resultProbabilities: {}
   };
+  
+  // 원본 CSV 데이터 저장
+  let originalCSVContent = '';
+  
+  // 날짜 필터 인스턴스 저장
+  let dateFilterInstance = null;
+
+  // 전역 필터링 함수 정의
+  function checkDateInRange(dateStr) {
+    // dateFilterInstance가 없을 때는 모든 날짜 포함
+    if (!dateFilterInstance) return true;
+    return dateFilterInstance.isDateInRange(dateStr);
+  }
 
   // 파일 드롭 처리 함수
   function handleDrop(e) {
@@ -50,11 +64,34 @@ document.addEventListener("DOMContentLoaded", function () {
   function handleCSVFile(file) {
     parseCSV(file, handleProcessedCSVData);
   }
-
   // 처리된 CSV 데이터 핸들링 함수
   function handleProcessedCSVData(csvContent) {
+    // 원본 CSV 데이터 저장
+    originalCSVContent = csvContent;
+    
     // CSV 데이터 처리
-    processedData = processCSVData(csvContent);
+    processFilteredData(csvContent);
+    
+    // 날짜 필터링 초기화
+    dateFilterInstance = initDateFilter({
+      csvContent: originalCSVContent,
+      onFilterChange: (filter) => {
+        console.log('필터 변경 찐지:', filter);
+        // 필터 변경 시 CSV 데이터 재처리
+        processFilteredData(originalCSVContent);
+      }
+    });
+    
+    // 결과 표시
+    results.style.display = "block";
+  }
+
+  // 필터링된 데이터 처리 함수
+  function processFilteredData(csvContent) {
+    // CSV 데이터 처리 (필터링 함수 설정)
+    processedData = processCSVData(csvContent, {
+      isDateInRange: checkDateInRange // 전역 필터링 함수 사용
+    });
     
     // UI 업데이트
     updateDonationTable(donationTableBody, processedData.donations);
@@ -66,12 +103,19 @@ document.addEventListener("DOMContentLoaded", function () {
       updateRouletteResultsOrder
     );
     
-    // 결과 표시
-    results.style.display = "block";
-    
     // 다운로드 버튼 활성화
     downloadDonationBtn.disabled = false;
     downloadRouletteBtn.disabled = false;
+    
+    // 날짜 정보 표시 업데이트 - 필터링된 데이터 개수와 총 개수 표시
+    if (dateFilterInstance) {
+      dateFilterInstance.updateDateInfo(
+        processedData.stats.totalProcessed,  // 필터링된 후 처리된 데이터 개수 (수정됨)
+        processedData.stats.totalRows,
+        processedData.stats.minDate,
+        processedData.stats.maxDate
+      );
+    }
   }
 
   // 룰렛 결과 순서 업데이트 함수

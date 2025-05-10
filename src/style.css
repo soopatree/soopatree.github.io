@@ -179,3 +179,112 @@ tr:hover {
   padding: 10px;
   border-radius: 4px;
 }
+
+/* 날짜 필터링 스타일 */
+.filter-section {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.filter-section h3 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #2c3e50;
+}
+
+.date-range {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.date-inputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.date-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.date-field label {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.date-field input[type="date"] {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.quick-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.filter-button {
+  padding: 8px 15px;
+  background-color: #ecf0f1;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.filter-button:hover {
+  background-color: #d5dbdb;
+}
+
+.filter-button.active {
+  background-color: #3498db;
+  color: white;
+}
+
+.filter-button.apply {
+  background-color: #2ecc71;
+  color: white;
+  margin-left: auto;
+}
+
+.filter-button.apply:hover {
+  background-color: #27ae60;
+}
+
+.date-info {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #555;
+}
+
+/* 모바일 반응형 스타일 */
+@media (max-width: 768px) {
+  .date-inputs {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .quick-filters {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .filter-button.apply {
+    margin-left: 0;
+    width: 100%;
+    margin-top: 10px;
+  }
+}
