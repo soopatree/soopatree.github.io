@@ -117,6 +117,10 @@ tr:hover {
   content: "⬇️";
   margin-right: 5px;
 }
+.download-button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
 .roulette-table {
   width: 100%;
   border-collapse: collapse;
@@ -153,16 +157,6 @@ tr:hover {
   user-select: none;
   position: relative;
 }
-
-/* .draggable-header::after {
-      content: "↔";
-      position: absolute;
-      right: 5px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 12px;
-      opacity: 0.5;
-  } */
 
 .draggable-header:hover {
   background-color: #e3f2fd;

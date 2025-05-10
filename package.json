@@ -1,0 +1,40 @@
+{
+  "name": "soopatree.github.io",
+  "version": "1.0.0",
+  "description": "별풍선 CSV 분석기",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack serve --open",
+    "build": "webpack",
+    "watch": "webpack --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soopatree/soopatree.github.io.git"
+  },
+  "keywords": [
+    "csv",
+    "analyzer"
+  ],
+  "author": "soopatree",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/soopatree/soopatree.github.io/issues"
+  },
+  "homepage": "https://github.com/soopatree/soopatree.github.io#readme",
+  "devDependencies": {
+    "@babel/core": "^7.23.9",
+    "@babel/preset-env": "^7.23.9",
+    "babel-loader": "^9.1.3",
+    "copy-webpack-plugin": "^12.0.2",
+    "css-loader": "^6.10.0",
+    "favicons": "^7.2.0",
+    "favicons-webpack-plugin": "^6.0.1",
+    "html-webpack-plugin": "^5.6.0",
+    "mini-css-extract-plugin": "^2.8.0",
+    "webpack": "^5.90.3",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
+  }
+}

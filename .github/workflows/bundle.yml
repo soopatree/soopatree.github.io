@@ -1,4 +1,4 @@
-name: Bundle HTML, CSS, and JS
+name: Build and Deploy Webpack
 
 on:
   push:
@@ -31,53 +31,11 @@ jobs:
       with:
         node-version: '18'
         
-    - name: Create dist directory
-      run: mkdir -p dist
+    - name: Install dependencies
+      run: npm ci
       
-    - name: Install imagemagick for favicon conversion
-      run: sudo apt-get update && sudo apt-get install -y imagemagick
-        
-    - name: Create favicon.ico from SVG
-      run: |
-        # SVG를 PNG로 변환 (여러 크기)
-        mkdir -p temp_favicon
-        convert -background none -size 16x16 favicon.svg temp_favicon/favicon-16.png
-        convert -background none -size 32x32 favicon.svg temp_favicon/favicon-32.png
-        convert -background none -size 48x48 favicon.svg temp_favicon/favicon-48.png
-        
-        # PNG들을 하나의 ICO 파일로 통합
-        convert temp_favicon/favicon-16.png temp_favicon/favicon-32.png temp_favicon/favicon-48.png dist/favicon.ico
-        
-        # SVG도 dist 디렉토리로 복사
-        cp favicon.svg dist/
-    
-    - name: Bundle HTML, CSS, and JS files
-      run: |
-        # 간단한 Node.js 스크립트를 사용하여 파일 병합
-        node -e "
-          const fs = require('fs');
-          
-          // 파일 읽기
-          const html = fs.readFileSync('index.html', 'utf8');
-          const css = fs.readFileSync('style.css', 'utf8');
-          const js = fs.readFileSync('script.js', 'utf8');
-          
-          // CSS와 JS 삽입
-          let result = html.replace(
-            '<link rel=\"stylesheet\" href=\"style.css\" />',
-            '<style>' + css + '</style>'
-          );
-          
-          result = result.replace(
-            '<script src=\"script.js\"></script>',
-            '<script>' + js + '</script>'
-          );
-          
-          // 결과 저장
-          fs.writeFileSync('dist/index.html', result);
-          
-          console.log('HTML, CSS, JS 파일을 성공적으로 번들링했습니다.');
-        "
+    - name: Build with Webpack
+      run: npm run build
         
     - name: Upload bundled file as artifact
       uses: actions/upload-artifact@v4
