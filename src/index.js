@@ -78,11 +78,15 @@ document.addEventListener("DOMContentLoaded", function () {
     // 날짜 필터링 초기화
     dateFilterInstance = initDateFilter({
       csvContent: originalCSVContent,
-      onFilterChange: () => processFilteredData(originalCSVContent)
     });
 
-    balloonFilterInstance = initBalloonFilter({
-      onFilterChange: () => processFilteredData(originalCSVContent)
+    balloonFilterInstance = initBalloonFilter({});
+
+    const applyAllFiltersBtn = document.getElementById('applyAllFilters');
+    applyAllFiltersBtn.addEventListener('click', () => {
+      dateFilterInstance.applyFilter();
+      balloonFilterInstance.applyFilter();
+      processFilteredData(originalCSVContent);
     });
     
     // 목업 영역 숨기기

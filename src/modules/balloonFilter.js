@@ -48,12 +48,12 @@ export function initBalloonFilter(options = {}) {
     globalFilterState.minBalloons = minBalloons;
     globalFilterState.maxBalloons = maxBalloons;
 
-    if (typeof options.onFilterChange === 'function') {
-      options.onFilterChange(filterState);
-    }
+    // if (typeof options.onFilterChange === 'function') {
+    //   options.onFilterChange(filterState);
+    // }
   }
 
-  applyFilterBtn.addEventListener('click', applyBalloonFilter);
+  // applyFilterBtn.addEventListener('click', applyBalloonFilter);
 
   return {
     applyFilter: applyBalloonFilter,
@@ -62,7 +62,7 @@ export function initBalloonFilter(options = {}) {
     resetFilter: () => {
       minBalloonsInput.value = '';
       maxBalloonsInput.value = '';
-      applyBalloonFilter();
+      // applyBalloonFilter(); // 통합 적용 버튼으로 인해 제거
     },
   };
 }

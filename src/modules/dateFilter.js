@@ -198,13 +198,13 @@ export function initDateFilter(options = {}) {
     updateDateInfo();
     
     // 콜백 호출
-    if (typeof options.onFilterChange === 'function') {
-      options.onFilterChange({
-        startDate: filterState.startDate,
-        endDate: filterState.endDate,
-        activeFilter: filterState.activeFilter
-      });
-    }
+    // if (typeof options.onFilterChange === 'function') {
+    //   options.onFilterChange({
+    //     startDate: filterState.startDate,
+    //     endDate: filterState.endDate,
+    //     activeFilter: filterState.activeFilter
+    //   });
+    // }
   }
   
   // 날짜 정보 텍스트 업데이트
@@ -286,17 +286,17 @@ export function initDateFilter(options = {}) {
     setActiveFilter('filterCustomRange');
   });
   
-  applyFilterBtn.addEventListener('click', () => {
-    // 직접 입력한 경우
-    if (filterState.activeFilter !== 'customrange') {
-      filterState.activeFilter = 'custom';
-      // 모든 버튼에서 active 클래스 제거
-      [filterAllBtn, filter1DayBtn, filter7DaysBtn, filter30DaysBtn, filter90DaysBtn, filter365DaysBtn, filterCustomRangeBtn].forEach(btn => {
-        btn.classList.remove('active');
-      });
-    }
-    applyDateFilter();
-  });
+  // applyFilterBtn.addEventListener('click', () => {
+  //   // 직접 입력한 경우
+  //   if (filterState.activeFilter !== 'customrange') {
+  //     filterState.activeFilter = 'custom';
+  //     // 모든 버튼에서 active 클래스 제거
+  //     [filterAllBtn, filter1DayBtn, filter7DaysBtn, filter30DaysBtn, filter90DaysBtn, filter365DaysBtn, filterCustomRangeBtn].forEach(btn => {
+  //       btn.classList.remove('active');
+  //     });
+  //   }
+  //   applyDateFilter();
+  // });
   
   // 날짜 필드 변경 이벤트 리스너
   startDateInput.addEventListener('change', () => {
@@ -307,7 +307,7 @@ export function initDateFilter(options = {}) {
   });
   
   // 초기 날짜 정보 표시
-  updateDateInfo();
+  // updateDateInfo();
   
   // 인터페이스 반환
   return {

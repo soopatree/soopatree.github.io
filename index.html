@@ -16,49 +16,47 @@
       <!-- 목업 데이터 영역 - 파일 업로드 전에 표시 -->
       <div class="mockup" id="mockup">
         <div class="filter-section">
-          <h3>날짜 필터링</h3>
-          <div class="date-range">
-            <div class="date-inputs">
-              <div class="date-field">
-                <label for="mockStartDate">시작 날짜:</label>
-                <input type="date" id="mockStartDate" name="mockStartDate" disabled />
+          <h3>필터링</h3>
+          <div class="filter-controls">
+            <div class="date-range">
+              <div class="date-inputs">
+                <div class="date-field">
+                  <label for="mockStartDate">시작 날짜:</label>
+                  <input type="date" id="mockStartDate" name="mockStartDate" disabled />
+                </div>
+                <div class="date-field">
+                  <label for="mockEndDate">종료 날짜:</label>
+                  <input type="date" id="mockEndDate" name="mockEndDate" disabled />
+                </div>
               </div>
-              <div class="date-field">
-                <label for="mockEndDate">종료 날짜:</label>
-                <input type="date" id="mockEndDate" name="mockEndDate" disabled />
+              <div class="quick-filters">
+                <button class="filter-button active" disabled>전체</button>
+                <button class="filter-button" disabled>1일전</button>
+                <button class="filter-button" disabled>1주일전</button>
+                <button class="filter-button" disabled>1개월전</button>
+                <button class="filter-button" disabled>3개월전</button>
+                <button class="filter-button" disabled>1년전</button>
+                <button class="filter-button" disabled>기간지정</button>
               </div>
             </div>
-            <div class="quick-filters">
-              <button class="filter-button active" disabled>전체</button>
-              <button class="filter-button" disabled>1일전</button>
-              <button class="filter-button" disabled>1주일전</button>
-              <button class="filter-button" disabled>1개월전</button>
-              <button class="filter-button" disabled>3개월전</button>
-              <button class="filter-button" disabled>1년전</button>
-              <button class="filter-button" disabled>기간지정</button>
-              <button class="filter-button apply" disabled>적용</button>
+            <div class="balloon-filter">
+              <div class="filter-inputs">
+                <div class="filter-field">
+                  <label for="mockMinBalloons">최소 갯수:</label>
+                  <input type="number" id="mockMinBalloons" name="mockMinBalloons" placeholder="0" disabled />
+                </div>
+                <div class="filter-field">
+                  <label for="mockMaxBalloons">최대 갯수:</label>
+                  <input type="number" id="mockMaxBalloons" name="mockMaxBalloons" placeholder="1000000" disabled />
+                </div>
+              </div>
             </div>
+          </div>
+          <div class="apply-filters-container">
+            <button class="filter-button apply" disabled>적용</button>
           </div>
           <div class="date-info">
             <p>2025-04-13 ~ 2025-04-16 [예시 데이터 100/100 개]</p>
-          </div>
-        </div>
-        <div class="filter-section">
-          <h3>풍 갯수 필터링</h3>
-          <div class="balloon-filter">
-            <div class="filter-inputs">
-              <div class="filter-field">
-                <label for="mockMinBalloons">최소 갯수:</label>
-                <input type="number" id="mockMinBalloons" name="mockMinBalloons" placeholder="0" disabled />
-              </div>
-              <div class="filter-field">
-                <label for="mockMaxBalloons">최대 갯수:</label>
-                <input type="number" id="mockMaxBalloons" name="mockMaxBalloons" placeholder="10000" disabled />
-              </div>
-            </div>
-            <div class="quick-filters">
-              <button class="filter-button apply" disabled>적용</button>
-            </div>
           </div>
         </div>
         <div class="dashboard">
@@ -161,49 +159,47 @@
 
       <div class="results" id="results">
         <div class="filter-section">
-          <h3>날짜 필터링</h3>
-          <div class="date-range">
-            <div class="date-inputs">
-              <div class="date-field">
-                <label for="startDate">시작 날짜:</label>
-                <input type="date" id="startDate" name="startDate" />
+          <h3>필터링</h3>
+          <div class="filter-controls">
+            <div class="date-range">
+              <div class="date-inputs">
+                <div class="date-field">
+                  <label for="startDate">시작 날짜:</label>
+                  <input type="date" id="startDate" name="startDate" />
+                </div>
+                <div class="date-field">
+                  <label for="endDate">종료 날짜:</label>
+                  <input type="date" id="endDate" name="endDate" />
+                </div>
               </div>
-              <div class="date-field">
-                <label for="endDate">종료 날짜:</label>
-                <input type="date" id="endDate" name="endDate" />
+              <div class="quick-filters">
+                <button id="filterAll" class="filter-button active">전체</button>
+                <button id="filter1Day" class="filter-button">1일전</button>
+                <button id="filter7Days" class="filter-button">1주일전</button>
+                <button id="filter30Days" class="filter-button">1개월전</button>
+                <button id="filter90Days" class="filter-button">3개월전</button>
+                <button id="filter365Days" class="filter-button">1년전</button>
+                <button id="filterCustomRange" class="filter-button">기간지정</button>
               </div>
             </div>
-            <div class="quick-filters">
-              <button id="filterAll" class="filter-button active">전체</button>
-              <button id="filter1Day" class="filter-button">1일전</button>
-              <button id="filter7Days" class="filter-button">1주일전</button>
-              <button id="filter30Days" class="filter-button">1개월전</button>
-              <button id="filter90Days" class="filter-button">3개월전</button>
-              <button id="filter365Days" class="filter-button">1년전</button>
-              <button id="filterCustomRange" class="filter-button">기간지정</button>
-              <button id="applyFilter" class="filter-button apply">적용</button>
+            <div class="balloon-filter">
+              <div class="filter-inputs">
+                <div class="filter-field">
+                  <label for="minBalloons">최소 갯수:</label>
+                  <input type="number" id="minBalloons" name="minBalloons" placeholder="0" />
+                </div>
+                <div class="filter-field">
+                  <label for="maxBalloons">최대 갯수:</label>
+                  <input type="number" id="maxBalloons" name="maxBalloons" placeholder="1000000" />
+                </div>
+              </div>
             </div>
+          </div>
+          <div class="apply-filters-container">
+            <button id="applyAllFilters" class="filter-button apply">적용</button>
           </div>
           <div class="date-info" id="dateInfo">
             <!-- 필터링된 날짜 정보가 표시됩니다 -->
-          </div>
-        </div>
-        <div class="filter-section">
-          <h3>풍 갯수 필터링</h3>
-          <div class="balloon-filter">
-            <div class="filter-inputs">
-              <div class="filter-field">
-                <label for="minBalloons">최소 갯수:</label>
-                <input type="number" id="minBalloons" name="minBalloons" placeholder="0" />
-              </div>
-              <div class="filter-field">
-                <label for="maxBalloons">최대 갯수:</label>
-                <input type="number" id="maxBalloons" name="maxBalloons" placeholder="1000000" />
-              </div>
-            </div>
-            <div class="quick-filters">
-              <button id="applyBalloonFilter" class="filter-button apply">적용</button>
-            </div>
           </div>
         </div>
         <div class="dashboard">
