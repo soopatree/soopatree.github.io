@@ -13,6 +13,7 @@ import {
 } from './modules/dataProcessor';
 import { updateDonationTable, updateRouletteGrid } from './modules/ui';
 import { initDateFilter } from './modules/dateFilter';
+import { initBalloonFilter } from './modules/balloonFilter';
 
 document.addEventListener("DOMContentLoaded", function () {
   // DOM 요소 참조
@@ -39,9 +40,16 @@ document.addEventListener("DOMContentLoaded", function () {
   // 날짜 필터 인스턴스 저장
   let dateFilterInstance = null;
 
+  // 풍선 필터 인스턴스 저장
+  let balloonFilterInstance = null;
+
   // 전역 필터링 함수 정의
   function checkDateInRange(dateStr) {
     return !dateFilterInstance ? true : dateFilterInstance.isDateInRange(dateStr);
+  }
+
+  function checkBalloonInRange(amount) {
+    return !balloonFilterInstance ? true : balloonFilterInstance.isBalloonInRange(amount);
   }
 
   // 파일 드롭 처리 함수
@@ -72,6 +80,10 @@ document.addEventListener("DOMContentLoaded", function () {
       csvContent: originalCSVContent,
       onFilterChange: () => processFilteredData(originalCSVContent)
     });
+
+    balloonFilterInstance = initBalloonFilter({
+      onFilterChange: () => processFilteredData(originalCSVContent)
+    });
     
     // 목업 영역 숨기기
     mockup.style.display = "none";
@@ -84,7 +96,8 @@ document.addEventListener("DOMContentLoaded", function () {
   function processFilteredData(csvContent) {
     // CSV 데이터 처리 (필터링 함수 설정)
     processedData = processCSVData(csvContent, {
-      isDateInRange: checkDateInRange
+      isDateInRange: checkDateInRange,
+      isBalloonInRange: checkBalloonInRange
     });
     
     // UI 업데이트

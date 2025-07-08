@@ -43,6 +43,24 @@
             <p>2025-04-13 ~ 2025-04-16 [예시 데이터 100/100 개]</p>
           </div>
         </div>
+        <div class="filter-section">
+          <h3>풍 갯수 필터링</h3>
+          <div class="balloon-filter">
+            <div class="filter-inputs">
+              <div class="filter-field">
+                <label for="mockMinBalloons">최소 갯수:</label>
+                <input type="number" id="mockMinBalloons" name="mockMinBalloons" placeholder="0" disabled />
+              </div>
+              <div class="filter-field">
+                <label for="mockMaxBalloons">최대 갯수:</label>
+                <input type="number" id="mockMaxBalloons" name="mockMaxBalloons" placeholder="10000" disabled />
+              </div>
+            </div>
+            <div class="quick-filters">
+              <button class="filter-button apply" disabled>적용</button>
+            </div>
+          </div>
+        </div>
         <div class="dashboard">
           <div class="card">
             <h2>룰렛 결과 통계</h2>
@@ -168,6 +186,24 @@
           </div>
           <div class="date-info" id="dateInfo">
             <!-- 필터링된 날짜 정보가 표시됩니다 -->
+          </div>
+        </div>
+        <div class="filter-section">
+          <h3>풍 갯수 필터링</h3>
+          <div class="balloon-filter">
+            <div class="filter-inputs">
+              <div class="filter-field">
+                <label for="minBalloons">최소 갯수:</label>
+                <input type="number" id="minBalloons" name="minBalloons" placeholder="0" />
+              </div>
+              <div class="filter-field">
+                <label for="maxBalloons">최대 갯수:</label>
+                <input type="number" id="maxBalloons" name="maxBalloons" placeholder="1000000" />
+              </div>
+            </div>
+            <div class="quick-filters">
+              <button id="applyBalloonFilter" class="filter-button apply">적용</button>
+            </div>
           </div>
         </div>
         <div class="dashboard">

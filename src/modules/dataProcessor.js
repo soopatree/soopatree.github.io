@@ -6,6 +6,7 @@ import { parseDate } from './dateFilter';
  * @param {string} csv - CSV 파일 내용
  * @param {Object} options - 처리 옵션
  * @param {Function} options.isDateInRange - 날짜 필터링 함수
+ * @param {Function} options.isBalloonInRange - 풍선 개수 필터링 함수
  * @returns {Object} - 처리된 데이터 객체
  */
 export function processCSVData(csv, options = {}) {
@@ -60,6 +61,12 @@ export function processCSVData(csv, options = {}) {
       
       // 후원 개수 추출 (숫자만)
       const amount = parseInt(amountText.replace(/[^0-9]/g, ""), 10) || 0;
+
+      // 풍선 개수 필터링 적용
+      if (typeof options.isBalloonInRange === 'function' && !options.isBalloonInRange(amount)) {
+        skippedRows++;
+        continue;
+      }
       
       // ID 추출 (괄호 안의 문자)
       const idMatch = donorFull.match(/\(([^)]+)\)/);
