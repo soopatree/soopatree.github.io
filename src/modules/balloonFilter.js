@@ -31,7 +31,6 @@ export function isBalloonInRange(amount) {
 export function initBalloonFilter(options = {}) {
   const minBalloonsInput = document.getElementById('minBalloons');
   const maxBalloonsInput = document.getElementById('maxBalloons');
-  const applyFilterBtn = document.getElementById('applyBalloonFilter');
 
   const filterState = {
     minBalloons: null,

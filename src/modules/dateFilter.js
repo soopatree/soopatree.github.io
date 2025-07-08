@@ -90,7 +90,6 @@ export function initDateFilter(options = {}) {
   const filter90DaysBtn = document.getElementById('filter90Days');
   const filter365DaysBtn = document.getElementById('filter365Days');
   const filterCustomRangeBtn = document.getElementById('filterCustomRange');
-  const applyFilterBtn = document.getElementById('applyFilter');
   const dateInfoEl = document.getElementById('dateInfo');
 
   // 날짜 필터 상태 객체
