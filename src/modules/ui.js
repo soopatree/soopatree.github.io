@@ -28,6 +28,9 @@ export function updateDonationTable(donationTableBody, donations) {
       <td><span class="donation-amount">${donation.totalAmount}</span></td>
     `;
     donationTableBody.appendChild(row);
+
+    // 행 숨기기 컨텍스트 메뉴 추가
+    row.addEventListener('contextmenu', (e) => showContextMenu(e, 'row', row));
   });
 }
 
@@ -81,6 +84,9 @@ export function updateRouletteGrid(rouletteGrid, processedRoulette, setupDragDro
       th.setAttribute("data-probability", probability);
       th.className = "draggable-header";
       headerRow.appendChild(th);
+
+      // 열 숨기기 컨텍스트 메뉴 추가
+      th.addEventListener('contextmenu', (e) => showContextMenu(e, 'column', th));
     });
   }
 
@@ -137,6 +143,9 @@ export function updateRouletteGrid(rouletteGrid, processedRoulette, setupDragDro
       
       // 행을 테이블에 추가
       tbody.appendChild(row);
+
+      // 행 숨기기 컨텍스트 메뉴 추가
+      row.addEventListener('contextmenu', (e) => showContextMenu(e, 'row', row));
     });
   }
   
@@ -145,4 +154,79 @@ export function updateRouletteGrid(rouletteGrid, processedRoulette, setupDragDro
   
   // 드래그 앤 드롭 기능 활성화
   setupDragDropForHeaders(table, swapColumns, updateRouletteResultsOrder);
+}
+
+/**
+ * 룰렛 결과 순서 업데이트 함수
+ */
+export function updateRouletteResultsOrder() {
+  const headers = document.querySelectorAll(".roulette-table th.draggable-header");
+  const results = Array.from(headers).map((header) => header.getAttribute("data-result"));
+  
+  // 전역 데이터 업데이트
+  if (window.processedData) {
+    window.processedData.results = results;
+  }
+}
+
+// Global variable to hold the context menu element
+let contextMenu = null;
+
+function hideContextMenu() {
+  if (contextMenu && contextMenu.parentNode) {
+    contextMenu.parentNode.removeChild(contextMenu);
+    contextMenu = null;
+  }
+}
+
+function showContextMenu(event, type, targetElement) {
+  event.preventDefault(); // Prevent default browser context menu
+
+  hideContextMenu(); // Hide any existing menu
+
+  contextMenu = document.createElement('ul');
+  contextMenu.className = 'context-menu';
+
+  if (type === 'row') {
+    const hideRowItem = document.createElement('li');
+    hideRowItem.textContent = '행 숨기기';
+    hideRowItem.addEventListener('click', () => {
+      hideRow(targetElement);
+      hideContextMenu();
+    });
+    contextMenu.appendChild(hideRowItem);
+  } else if (type === 'column') {
+    const hideColumnItem = document.createElement('li');
+    hideColumnItem.textContent = '열 숨기기';
+    hideColumnItem.addEventListener('click', () => {
+      // Need to pass column index and table reference
+      const columnIndex = Array.from(targetElement.parentNode.children).indexOf(targetElement);
+      hideColumn(columnIndex, targetElement.closest('table'));
+      hideContextMenu();
+    });
+    contextMenu.appendChild(hideColumnItem);
+  }
+
+  // Position the menu
+  contextMenu.style.top = `${event.pageY}px`;
+  contextMenu.style.left = `${event.pageX}px`;
+
+  document.body.appendChild(contextMenu);
+
+  // Hide menu when clicking anywhere else
+  document.addEventListener('click', hideContextMenu, { once: true });
+}
+
+function hideRow(rowElement) {
+  rowElement.classList.add('hidden-row');
+}
+
+function hideColumn(columnIndex, tableElement) {
+  const rows = tableElement.querySelectorAll('tr');
+  rows.forEach(row => {
+    const cells = row.children;
+    if (cells[columnIndex]) {
+      cells[columnIndex].classList.add('hidden-column');
+    }
+  });
 }

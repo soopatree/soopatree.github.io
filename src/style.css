@@ -229,24 +229,26 @@ tr:hover {
 .filter-controls {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 20px; /* 필터 그룹 간의 간격 */
   margin-bottom: 20px;
 }
 
-.filter-group {
+.date-range,
+.balloon-filter {
   flex: 1;
-  min-width: 300px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  min-width: 300px; /* 최소 너비 설정 */
   padding: 15px;
-  background-color: #fdfdfd;
+  /* border: 1px solid #e0e0e0; */ /* 경계선 제거 */
+  /* border-radius: 8px; */ /* 둥근 모서리 제거 */
+  /* background-color: #fdfdfd; */ /* 배경색 제거 */
 }
 
-.filter-group h4 {
+.date-range h4,
+.balloon-filter h4 {
   font-size: 16px;
   margin-bottom: 10px;
   color: #34495e;
-  border-bottom: 1px solid #eee;
+  /* border-bottom: 1px solid #eee; */ /* 하단 경계선 제거 */
   padding-bottom: 8px;
 }
 
@@ -322,7 +324,17 @@ tr:hover {
   background-color: #27ae60;
 }
 
-.date-info {
+.filter-button.apply.needs-reapply {
+  background-color: #ff9800; /* 주황색 계열로 변경 */
+  animation: pulse 1s infinite alternate; /* 깜빡이는 애니메이션 추가 */
+}
+
+@keyframes pulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.05); }
+}
+
+.result-info {
   margin-top: 15px;
   padding: 10px;
   background-color: #f8f9fa;
@@ -337,7 +349,8 @@ tr:hover {
   .filter-controls {
     flex-direction: column;
   }
-  .filter-group {
+  .date-range,
+  .balloon-filter {
     min-width: unset;
     width: 100%;
   }
@@ -364,4 +377,37 @@ tr:hover {
   font-size: 14px;
   color: #6c757d;
   border-top: 1px solid #e9ecef;
+}
+
+/* 컨텍스트 메뉴 스타일 */
+.context-menu {
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  list-style: none;
+  padding: 5px 0;
+  min-width: 150px;
+}
+
+.context-menu li {
+  padding: 8px 15px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+}
+
+.context-menu li:hover {
+  background-color: #f0f0f0;
+}
+
+/* 숨겨진 행/열 스타일 */
+.hidden-row {
+  display: none;
+}
+
+.hidden-column {
+  display: none;
 }

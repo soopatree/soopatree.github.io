@@ -17,7 +17,7 @@ export function processCSVData(csv, options = {}) {
   const pattern = /별풍선,"([^"]+)",([^,]+),([^,]+),([^,]*),([^,]*)/g;
   
   // 처리 통계 변수
-  let totalProcessed = 0;
+  let finalProcessedCount = 0;
   let skippedRows = 0;
   let errorRows = 0;
   let totalRows = 0;
@@ -52,7 +52,7 @@ export function processCSVData(csv, options = {}) {
       }
       
       // 필터링을 통과한 행만 실제 처리됨
-      totalProcessed++;
+      // totalProcessed++; // 이 위치에서 제거
       
       const donorFull = match[2].trim();
       const amountText = match[3].trim();
@@ -67,6 +67,9 @@ export function processCSVData(csv, options = {}) {
         skippedRows++;
         continue;
       }
+      
+      // 모든 필터를 통과한 경우에만 finalProcessedCount 증가
+      finalProcessedCount++; // 이 위치로 이동
       
       // ID 추출 (괄호 안의 문자)
       const idMatch = donorFull.match(/\(([^)]+)\)/);
@@ -179,8 +182,8 @@ export function processCSVData(csv, options = {}) {
     resultProbabilities,
     stats: {
       totalRows,
-      processedRows: totalProcessed,
-      totalProcessed,
+      processedRows: finalProcessedCount,
+      totalProcessed: finalProcessedCount,
       skippedRows,
       minDate,
       maxDate

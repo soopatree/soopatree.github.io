@@ -18,8 +18,7 @@
         <div class="filter-section">
           <h3>필터링</h3>
           <div class="filter-controls">
-            <div class="filter-group date-filter-group">
-              <h4>날짜</h4>
+            <div class="date-range">
               <div class="date-inputs">
                 <div class="date-field">
                   <label for="mockStartDate">시작 날짜:</label>
@@ -40,8 +39,7 @@
                 <button class="filter-button" disabled>기간지정</button>
               </div>
             </div>
-            <div class="filter-group balloon-filter-group">
-              <h4>풍 갯수</h4>
+            <div class="balloon-filter">
               <div class="filter-inputs">
                 <div class="filter-field">
                   <label for="mockMinBalloons">최소 갯수:</label>
@@ -57,7 +55,7 @@
           <div class="apply-filters-container">
             <button class="filter-button apply" disabled>적용</button>
           </div>
-          <div class="date-info">
+          <div class="result-info">
             <p>2025-04-13 ~ 2025-04-16 [예시 데이터 100/100 개]</p>
           </div>
         </div>
@@ -163,8 +161,7 @@
         <div class="filter-section">
           <h3>필터링</h3>
           <div class="filter-controls">
-            <div class="filter-group date-filter-group">
-              <h4>날짜</h4>
+            <div class="date-range">
               <div class="date-inputs">
                 <div class="date-field">
                   <label for="startDate">시작 날짜:</label>
@@ -185,8 +182,7 @@
                 <button id="filterCustomRange" class="filter-button">기간지정</button>
               </div>
             </div>
-            <div class="filter-group balloon-filter-group">
-              <h4>풍 갯수</h4>
+            <div class="balloon-filter">
               <div class="filter-inputs">
                 <div class="filter-field">
                   <label for="minBalloons">최소 갯수:</label>
@@ -202,7 +198,7 @@
           <div class="apply-filters-container">
             <button id="applyAllFilters" class="filter-button apply">적용</button>
           </div>
-          <div class="date-info" id="dateInfo">
+          <div class="result-info" id="resultInfo">
             <!-- 필터링된 날짜 정보가 표시됩니다 -->
           </div>
         </div>

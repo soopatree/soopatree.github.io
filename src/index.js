@@ -83,17 +83,48 @@ document.addEventListener("DOMContentLoaded", function () {
     balloonFilterInstance = initBalloonFilter({});
 
     const applyAllFiltersBtn = document.getElementById('applyAllFilters');
-    applyAllFiltersBtn.addEventListener('click', () => {
-      dateFilterInstance.applyFilter();
-      balloonFilterInstance.applyFilter();
-      processFilteredData(originalCSVContent);
-    });
     
     // 목업 영역 숨기기
     mockup.style.display = "none";
     
     // 결과 표시
     results.style.display = "block";
+
+    // 필터 적용 버튼 상태 관리 함수
+    function setApplyButtonState(needsReapply) {
+      if (needsReapply) {
+        applyAllFiltersBtn.classList.add('needs-reapply');
+      } else {
+        applyAllFiltersBtn.classList.remove('needs-reapply');
+      }
+    }
+
+    // 필터 입력 요소 변경 감지
+    const filterInputs = document.querySelectorAll('.filter-section input, .filter-section button:not(.apply)');
+    filterInputs.forEach(input => {
+      input.addEventListener('change', () => setApplyButtonState(true));
+      input.addEventListener('input', () => setApplyButtonState(true)); // input 이벤트 추가
+      input.addEventListener('click', () => setApplyButtonState(true));
+    });
+
+    // 적용 버튼 클릭 시 상태 초기화
+    applyAllFiltersBtn.addEventListener('click', () => {
+      dateFilterInstance.applyFilter();
+      balloonFilterInstance.applyFilter();
+      processFilteredData(originalCSVContent);
+      setApplyButtonState(false);
+    });
+
+    // filter-section 내에서 Enter 키 입력 시 필터 적용
+    const filterSection = document.querySelector('.filter-section');
+    if (filterSection) {
+      filterSection.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault(); // 기본 Enter 동작 방지 (예: 폼 제출)
+          applyAllFiltersBtn.click();
+        }
+      });
+    }
   }
 
   // 필터링된 데이터 처리 함수

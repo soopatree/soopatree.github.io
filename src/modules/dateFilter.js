@@ -90,7 +90,7 @@ export function initDateFilter(options = {}) {
   const filter90DaysBtn = document.getElementById('filter90Days');
   const filter365DaysBtn = document.getElementById('filter365Days');
   const filterCustomRangeBtn = document.getElementById('filterCustomRange');
-  const dateInfoEl = document.getElementById('dateInfo');
+  const resultInfoEl = document.getElementById('resultInfo');
 
   // 날짜 필터 상태 객체
   const filterState = {
@@ -230,7 +230,7 @@ export function initDateFilter(options = {}) {
         countText = ` [${filteredCount}/${totalCount} 개]`;
       }
       
-      dateInfoEl.textContent = `현재 통계: ${startDateStr} ~ ${endDateStr} ${filterTypeText}${countText}`;
+      resultInfoEl.textContent = `현재 통계: ${startDateStr} ~ ${endDateStr} ${filterTypeText}${countText}`;
     } else {
       // 전체 기간일 때 최대/최소 날짜 표시
       let dateRangeText = '';
@@ -246,7 +246,7 @@ export function initDateFilter(options = {}) {
         countText = ` [${filteredCount}/${totalCount} 개]`;
       }
       
-      dateInfoEl.textContent = `현재 통계: 전체 기간${dateRangeText}${countText}`;
+      resultInfoEl.textContent = `현재 통계: 전체 기간${dateRangeText}${countText}`;
     }
   }
   
