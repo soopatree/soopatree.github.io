@@ -105,6 +105,15 @@ document.addEventListener("DOMContentLoaded", function () {
       input.addEventListener('change', () => setApplyButtonState(true));
       input.addEventListener('input', () => setApplyButtonState(true)); // input 이벤트 추가
       input.addEventListener('click', () => setApplyButtonState(true));
+      // Enter 키 입력 시 필터 적용
+      if (input.tagName === 'INPUT') { // input 요소에만 keydown 리스너 추가
+        input.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter') {
+            event.preventDefault(); // 기본 Enter 동작 방지 (예: 폼 제출)
+            applyAllFiltersBtn.click();
+          }
+        });
+      }
     });
 
     // 적용 버튼 클릭 시 상태 초기화
@@ -114,17 +123,6 @@ document.addEventListener("DOMContentLoaded", function () {
       processFilteredData(originalCSVContent);
       setApplyButtonState(false);
     });
-
-    // filter-section 내에서 Enter 키 입력 시 필터 적용
-    const filterSection = document.querySelector('.filter-section');
-    if (filterSection) {
-      filterSection.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-          event.preventDefault(); // 기본 Enter 동작 방지 (예: 폼 제출)
-          applyAllFiltersBtn.click();
-        }
-      });
-    }
   }
 
   // 필터링된 데이터 처리 함수
